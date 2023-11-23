@@ -7,6 +7,7 @@ public class Profile : IAuditableEntity
     public User? User { get; set; }
     public IEnumerable<Subscription>? Subscriptions { get; set; }
     public IEnumerable<Chat>? Chats { get; set; }
+    public IEnumerable<WishList>? WishLists { get; set; }
     public DateTime CreatingTime { get; set; }
     public DateTime EditingTime { get; set; }
     public DateTime? DeletingTime { get; set; }

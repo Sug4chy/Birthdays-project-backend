@@ -13,8 +13,7 @@ public class ChatEntityConfigurations : IEntityTypeConfiguration<Chat>
         builder.HasKey(c => c.Id);
         builder.HasAlternateKey(c => c.ChatUrl);
 
-        builder
-            .HasOne(c => c.BirthdayMan)
+        builder.HasOne(c => c.BirthdayMan)
             .WithMany(p => p.Chats)
             .HasForeignKey(c => c.BirthdayManId);
 
