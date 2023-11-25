@@ -11,4 +11,10 @@ public sealed class AppDbContext : IdentityDbContext<User>
     {
         Database.EnsureCreated();
     }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+    }
 }
