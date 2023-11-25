@@ -33,5 +33,11 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         }
 
         app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
     }
 }
