@@ -1,4 +1,4 @@
-﻿namespace Data.Entities;
+﻿namespace Birthdays.Data.Entities;
 
 public enum ChatType
 {

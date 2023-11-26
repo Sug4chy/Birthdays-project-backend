@@ -1,8 +1,8 @@
-﻿using Data.Entities;
+﻿using Birthdays.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Data.EntityConfigurations;
+namespace Birthdays.Data.EntityConfigurations;
 
 public class SubscriptionEntityConfiguration : IEntityTypeConfiguration<Subscription>
 {

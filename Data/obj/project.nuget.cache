@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GGNniRtHiCYLtBsgLxmbwGY4iy5TjjzB/RW7pSXuIsIThQQbBWhIS7JXou75SxgVTl4rphd/7IWGez0/AEZBOA==",
+  "dgSpecHash": "z0QUicUVh0mQZHA96c5uXVg2K+yalCFwL028cmfoUHq4eHKdUn+lV21kp40GDbrUn/ZycfC9npZept4Y7bFNIQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays_solution\\Data\\Data.csproj",
+  "projectFilePath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays\\Data\\Birthdays.Data.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.0\\microsoft.aspnetcore.cryptography.internal.8.0.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.0\\microsoft.aspnetcore.cryptography.keyderivation.8.0.0.nupkg.sha512",

@@ -891,11 +891,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Stepan\\RiderProjects\\Birthdays_solution\\Data\\Data.csproj",
-      "projectName": "Data",
-      "projectPath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays_solution\\Data\\Data.csproj",
+      "projectUniqueName": "C:\\Users\\Stepan\\RiderProjects\\Birthdays\\Data\\Birthdays.Data.csproj",
+      "projectName": "Birthdays.Data",
+      "projectPath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays\\Data\\Birthdays.Data.csproj",
       "packagesPath": "C:\\Users\\Stepan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays_solution\\Data\\obj\\",
+      "outputPath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays\\Data\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Stepan\\AppData\\Roaming\\NuGet\\NuGet.Config"
