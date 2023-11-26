@@ -7,6 +7,23 @@ public abstract class RepositoryBase<T>(DbContext context)
 {
     protected DbSet<T> Set => context.Set<T>();
 
-    protected Task CommitChangesAsync()
-        => context.SaveChangesAsync();
+    public abstract ValueTask<T?> FindByIdAsync(Guid id);
+
+    public async Task SaveAsync(T entity)
+        => await Set.AddAsync(entity);
+
+    public Task UpdateAsync(T entity)
+    {
+        Set.Update(entity);
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteAsync(T entity)
+    {
+        Set.Remove(entity);
+        return Task.CompletedTask;
+    }
+
+    public Task CommitChangesAsync(CancellationToken ct = default)
+        => context.SaveChangesAsync(ct);
 }
