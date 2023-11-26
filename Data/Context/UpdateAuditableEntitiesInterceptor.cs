@@ -1,8 +1,9 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
+using Data.Entities.Auditable;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Birthdays.Data.Context;
+namespace Data.Context;
 
 public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
 {

@@ -1,8 +1,8 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Birthdays.Data.EntityConfigurations;
+namespace Data.EntityConfigurations;
 
 public class ProfileEntityConfiguration : IEntityTypeConfiguration<Profile>
 {
@@ -20,9 +20,13 @@ public class ProfileEntityConfiguration : IEntityTypeConfiguration<Profile>
             .WithOne(c => c.BirthdayMan)
             .HasForeignKey(c => c.BirthdayManId);
 
-        builder.HasMany(p => p.Subscriptions)
+        builder.HasMany(p => p.SubscriptionsAsBirthdayMan)
             .WithOne(s => s.BirthdayMan)
             .HasForeignKey(s => s.BirthdayManId);
+
+        builder.HasMany(p => p.SubscriptionsAsSubscriber)
+            .WithOne(s => s.Subscriber)
+            .HasForeignKey(s => s.SubscriberId);
 
         builder.HasMany(p => p.WishLists)
             .WithOne(wl => wl.BirthdayMan)

@@ -1,7 +1,7 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Birthdays.Data.Repositories;
+namespace Data.Repositories;
 
 public class UserRepository(DbContext context) : RepositoryBase<User>(context)
 {

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Data.Context;
+using Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Birthdays.Data.Context;
-using Birthdays.Data.Entities;
 
 namespace Web;
 

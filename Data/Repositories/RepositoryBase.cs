@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Birthdays.Data.Repositories;
+namespace Data.Repositories;
 
 public abstract class RepositoryBase<T>(DbContext context)
     where T : class

@@ -1,8 +1,8 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Birthdays.Data.EntityConfigurations;
+namespace Data.EntityConfigurations;
 
 public class WishListEntityConfiguration : IEntityTypeConfiguration<WishList>
 {

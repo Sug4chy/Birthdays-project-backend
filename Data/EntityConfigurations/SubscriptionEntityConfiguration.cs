@@ -1,8 +1,8 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Birthdays.Data.EntityConfigurations;
+namespace Data.EntityConfigurations;
 
 public class SubscriptionEntityConfiguration : IEntityTypeConfiguration<Subscription>
 {
@@ -13,11 +13,11 @@ public class SubscriptionEntityConfiguration : IEntityTypeConfiguration<Subscrip
         builder.HasKey(s => s.Id);
 
         builder.HasOne(s => s.BirthdayMan)
-            .WithMany(p => p.Subscriptions)
+            .WithMany(p => p.SubscriptionsAsBirthdayMan)
             .HasForeignKey(s => s.BirthdayManId);
 
         builder.HasOne(s => s.Subscriber)
-            .WithMany(p => p.Subscriptions)
+            .WithMany(p => p.SubscriptionsAsSubscriber)
             .HasForeignKey(s => s.SubscriberId);
     }
 }

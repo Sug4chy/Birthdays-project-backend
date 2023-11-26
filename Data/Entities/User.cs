@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Data.Entities.Auditable;
+using Microsoft.AspNetCore.Identity;
 
-namespace Birthdays.Data.Entities;
+namespace Data.Entities;
 
 public class User : IdentityUser, IAuditableEntity
 {
@@ -8,9 +9,9 @@ public class User : IdentityUser, IAuditableEntity
     public Profile? Profile { get; set; }
     public required string Name { get; set; }
     public required string Surname { get; set; }
-    public required string? Patronymic { get; set; }
+    public string? Patronymic { get; set; }
     public required DateOnly BirthDate { get; set; }
     public DateTime CreatingTime { get; set; }
     public DateTime EditingTime { get; set; }
-    public DateTime? DeletingTime { get; set; } = null;
+    public DateTime? DeletingTime { get; set; }
 }

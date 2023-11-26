@@ -1,8 +1,8 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Birthdays.Data.EntityConfigurations;
+namespace Data.EntityConfigurations;
 
 public class DatabaseFileEntityConfiguration : IEntityTypeConfiguration<DatabaseFile>
 {
@@ -15,6 +15,7 @@ public class DatabaseFileEntityConfiguration : IEntityTypeConfiguration<Database
         builder.HasAlternateKey(f => f.FileRef);
 
         builder.HasOne(f => f.Wish)
-            .WithOne(w => w.Image);
+            .WithOne(w => w.Image)
+            .HasForeignKey<Wish>(w => w.ImageId);
     }
 }

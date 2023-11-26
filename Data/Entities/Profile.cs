@@ -1,14 +1,15 @@
-﻿namespace Birthdays.Data.Entities;
+﻿using Data.Entities.Auditable;
 
-public class Profile : IAuditableEntity
+namespace Data.Entities;
+
+public class Profile
+    : AuditableEntity
 {
     public Guid Id { get; set; }
     public string? Description { get; set; }
     public User? User { get; set; }
-    public IEnumerable<Subscription>? Subscriptions { get; set; }
-    public IEnumerable<Chat>? Chats { get; set; }
-    public IEnumerable<WishList>? WishLists { get; set; }
-    public DateTime CreatingTime { get; set; }
-    public DateTime EditingTime { get; set; }
-    public DateTime? DeletingTime { get; set; }
+    public ICollection<Subscription>? SubscriptionsAsBirthdayMan { get; set; }
+    public ICollection<Subscription>? SubscriptionsAsSubscriber { get; set; }
+    public ICollection<Chat>? Chats { get; set; }
+    public ICollection<WishList>? WishLists { get; set; }
 }

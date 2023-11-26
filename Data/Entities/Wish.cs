@@ -1,6 +1,8 @@
-﻿namespace Birthdays.Data.Entities;
+﻿using Data.Entities.Auditable;
 
-public class Wish : IAuditableEntity
+namespace Data.Entities;
+
+public class Wish : AuditableEntity
 {
     public Guid Id { get; set; }
     public required Guid WishListId { get; set; }
@@ -9,7 +11,4 @@ public class Wish : IAuditableEntity
     public DatabaseFile? Image { get;set; }
     public string? GiftRef { get; set; }
     public string? Description { get; set; }
-    public DateTime CreatingTime { get; set; }
-    public DateTime EditingTime { get; set; }
-    public DateTime? DeletingTime { get; set; }
 }

@@ -1,8 +1,8 @@
-﻿using Birthdays.Data.Entities;
+﻿using Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Birthdays.Data.Context;
+namespace Data.Context;
 
 public sealed class AppDbContext : IdentityDbContext<User>
 {
