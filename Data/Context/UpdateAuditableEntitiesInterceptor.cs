@@ -1,5 +1,4 @@
-﻿using Data.Entities;
-using Data.Entities.Auditable;
+﻿using Data.Entities.Auditable;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -24,6 +23,7 @@ public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
             {
                 case EntityState.Added:
                     entry.Property(x => x.CreatingTime).CurrentValue = DateTime.UtcNow;
+                    entry.Property(x => x.EditingTime).CurrentValue = DateTime.UtcNow;
                     break;
                 case EntityState.Modified:
                     entry.Property(x => x.EditingTime).CurrentValue = DateTime.UtcNow;
