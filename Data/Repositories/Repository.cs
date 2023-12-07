@@ -2,24 +2,25 @@
 
 namespace Data.Repositories;
 
-public class DbRepository<TEntity>(DbContext context) : IRepository<TEntity> 
+public class Repository<TEntity>(DbContext context) : IRepository<TEntity> 
     where TEntity : class
 {
     private DbSet<TEntity> Set => context.Set<TEntity>();
 
-    public Task<IQueryable<TEntity>> ReadFromDbAsync()
+    public Task<IQueryable<TEntity>> Select()
         => Task.FromResult(Set.AsQueryable());
 
-    public async Task CreateAndSaveToDbAsync(TEntity entity)
-        => await Set.AddAsync(entity);
+    public async Task CreateAndSaveAsync(TEntity entity, 
+        CancellationToken ct = default)
+        => await Set.AddAsync(entity, ct);
 
-    public Task UpdateInDbAsync(TEntity entity)
+    public Task Update(TEntity entity)
     {
         Set.Update(entity);
         return Task.CompletedTask;
     }
 
-    public Task DeleteFromDbAsync(TEntity entity)
+    public Task Remove(TEntity entity)
     {
         Set.Remove(entity);
         return Task.CompletedTask;
