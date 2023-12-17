@@ -21,6 +21,7 @@ public class RegisterHandler(
             User = user, 
             Password = await authService.HashPassword(request.Password, ct)
         }, ct);
+        await profileService.CommitAsync();
 
         return new RegisterResponse
         {

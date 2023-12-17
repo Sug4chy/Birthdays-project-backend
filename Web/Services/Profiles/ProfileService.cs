@@ -11,4 +11,7 @@ public class ProfileService(IRepository<Profile> profilesDb) : IProfileService
         await profilesDb.CreateAndSaveAsync(newProfile, ct);
         return newProfile;
     }
+
+    public Task CommitAsync(CancellationToken ct = default)
+        => profilesDb.CommitChangesAsync(ct);
 }

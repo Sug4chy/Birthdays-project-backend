@@ -5,7 +5,7 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class AuthController
+public class AuthController : ControllerBase
 {
     [HttpPost("/register")]
     public Task<RegisterResponse> Register(

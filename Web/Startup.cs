@@ -14,14 +14,14 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
         services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
         services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
-            var updateAuditableInterceptor = serviceProvider.GetRequiredService<UpdateAuditableEntitiesInterceptor>();
+            var updateAuditableInterceptor = serviceProvider
+                .GetRequiredService<UpdateAuditableEntitiesInterceptor>();
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
                 .AddInterceptors(updateAuditableInterceptor);
         });
@@ -45,6 +45,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 };
             });
 
+        services.AddControllers();
+        
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddApplicationServices();
         services.AddHandlers();
@@ -59,10 +61,12 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         }
 
         app.UseHttpsRedirection();
-
+        
         app.UseRouting();
-
+        
         app.UseAuthentication();
         app.UseAuthorization();
+        
+        app.UseEndpoints(e => e.MapControllers());
     }
 }

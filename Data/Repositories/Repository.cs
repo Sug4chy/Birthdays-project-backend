@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public class Repository<TEntity>(DbContext context) : IRepository<TEntity> 
+public class Repository<TEntity>(AppDbContext context) : IRepository<TEntity> 
     where TEntity : class
 {
     private DbSet<TEntity> Set => context.Set<TEntity>();
