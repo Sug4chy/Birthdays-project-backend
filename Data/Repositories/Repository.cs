@@ -11,7 +11,7 @@ public class Repository<TEntity>(AppDbContext context) : IRepository<TEntity>
     public Task<IQueryable<TEntity>> Select()
         => Task.FromResult(Set.AsQueryable());
 
-    public async Task CreateAndSaveAsync(TEntity entity, 
+    public async Task AddAsync(TEntity entity, 
         CancellationToken ct = default)
         => await Set.AddAsync(entity, ct);
 

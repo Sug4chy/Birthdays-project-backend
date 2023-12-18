@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "08z/WeLq44nRHUUyyRPn6xnAbVNfqREpcgbzoP9s7FSR2n6FmcvCg1Du2qJA8mXFIrsqEFYCeUmOQK2vbCNcAQ==",
+  "dgSpecHash": "swkbLBWlgUGb50bYq0XYsXQZ3MlfF5n1vTXBaOFjY51eIEEnSRmc7FWKOqX4zRcclwQEv3DUc5fhq1Gp3teDDg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays\\Birthdays.Domain\\Birthdays.Domain.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Stepan\\.nuget\\packages\\fluentvalidation\\11.8.1\\fluentvalidation.11.8.1.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.0\\microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.0\\microsoft.aspnetcore.cryptography.internal.8.0.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.0\\microsoft.aspnetcore.cryptography.keyderivation.8.0.0.nupkg.sha512",
@@ -31,6 +34,8 @@
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.0.3\\microsoft.identitymodel.tokens.7.0.3.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\npgsql\\8.0.0\\npgsql.8.0.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.0\\npgsql.entityframeworkcore.postgresql.8.0.0.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\serilog.sinks.console\\5.0.1\\serilog.sinks.console.5.0.1.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.0.3\\system.identitymodel.tokens.jwt.7.0.3.nupkg.sha512"
   ],
   "logs": []

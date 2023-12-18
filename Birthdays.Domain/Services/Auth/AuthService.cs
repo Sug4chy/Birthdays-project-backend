@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Data.Entities;
 using Domain.Models;
@@ -14,24 +13,17 @@ namespace Domain.Services.Auth;
 public class AuthService(UserManager<User> userManager, 
     SignInManager<User> signInManager, IConfiguration config) : IAuthService
 {
-    public async Task RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
+    public async Task<string> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
     {
         var result = await userManager.CreateAsync(model.User, model.Password);
         if (!result.Succeeded)
         {
-            throw new AuthenticationException();
+            return result.Errors.First().Code;
         }
 
         await signInManager.SignInAsync(model.User, false);
+        return "";
     }
-
-    public ValueTask<string> HashPassword(string password, CancellationToken ct = default)
-        => new(Encoding.UTF8.GetString(Rfc2898DeriveBytes.Pbkdf2(
-            Encoding.UTF8.GetBytes(password),
-            Encoding.UTF8.GetBytes(config.GetValue<string>("Salt")!),
-            350000,
-            HashAlgorithmName.SHA512,
-            64)));
 
     public ValueTask<string> GenerateToken(User user, CancellationToken ct = default)
     {
@@ -56,6 +48,6 @@ public class AuthService(UserManager<User> userManager,
     
     private SymmetricSecurityKey GetSymmetricSecurityKey()
         => new(
-            Encoding.UTF8.GetBytes(config.GetValue<string>("Key")!
+            Encoding.UTF8.GetBytes(config.GetValue<string>("SymmetricSecurityKey")!
             ));
 }

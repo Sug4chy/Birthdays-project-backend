@@ -8,10 +8,7 @@ public class ProfileService(IRepository<Profile> profilesDb) : IProfileService
     public async Task<Profile> CreateAsync(CancellationToken ct = default)
     {
         var newProfile = new Profile();
-        await profilesDb.CreateAndSaveAsync(newProfile, ct);
+        await profilesDb.AddAsync(newProfile, ct);
         return newProfile;
     }
-
-    public Task CommitAsync(CancellationToken ct = default)
-        => profilesDb.CommitChangesAsync(ct);
 }

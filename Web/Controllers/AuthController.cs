@@ -1,5 +1,6 @@
 ﻿using Domain.Handlers.Auth;
 using Domain.Requests.Auth;
+using Domain.Responses;
 using Domain.Responses.Auth;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,7 @@ namespace Web.Controllers;
 public class AuthController : ControllerBase
 {
     [HttpPost("register")]
-    public Task<RegisterResponse> Register(
+    public Task<WrapperResponseDto<RegisterResponse>> Register(
         [FromBody] RegisterRequest request,
         [FromServices] RegisterHandler handler,
         CancellationToken ct = default)

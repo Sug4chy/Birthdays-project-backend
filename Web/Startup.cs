@@ -1,11 +1,7 @@
 ﻿using System.Text;
-using Data.Context;
-using Data.Entities;
-using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Web.Extensions;
 
 namespace Web;
@@ -17,17 +13,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
-        services.AddDbContext<AppDbContext>((serviceProvider, options) =>
-        {
-            var updateAuditableInterceptor = serviceProvider
-                .GetRequiredService<UpdateAuditableEntitiesInterceptor>();
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-                .AddInterceptors(updateAuditableInterceptor);
-        });
-
-        services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>();
+        services.AddDataLayerServices(configuration);
+        
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -40,16 +27,21 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                     ValidateLifetime = true,
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                            configuration.GetValue<string>("Key")!)),
+                            configuration.GetValue<string>("SymmetricSecurityKey")!)),
                     ValidateIssuerSigningKey = true
                 };
             });
 
         services.AddControllers();
         
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddValidators();
         services.AddApplicationServices();
         services.AddHandlers();
+
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .MinimumLevel.Debug()
+            .CreateLogger();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -59,8 +51,6 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        app.UseHttpsRedirection();
         
         app.UseRouting();
         

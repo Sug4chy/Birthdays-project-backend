@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "hL7FS6/oj5a4pfXS78enS+wIkj++LQXUR7jifuLZct/x40GvomUD/39erwoj65/qt2T+7yo2Ny2ALhSJEQkiJA==",
+  "dgSpecHash": "bvaXhlo1dtxEG1dUZasGjq6dsupw3UA6PlU5B/4BaU3r3yEA7cu5LyAt7dqhTrllKJGDLyOV6heph4SyLzZd9g==",
   "success": true,
   "projectFilePath": "C:\\Users\\Stepan\\RiderProjects\\Birthdays\\Web\\Birthdays.Web.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Stepan\\.nuget\\packages\\fluentvalidation\\11.8.1\\fluentvalidation.11.8.1.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.0\\microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.0\\microsoft.aspnetcore.cryptography.internal.8.0.0.nupkg.sha512",
@@ -45,6 +48,8 @@
     "C:\\Users\\Stepan\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\npgsql\\8.0.0\\npgsql.8.0.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.0\\npgsql.entityframeworkcore.postgresql.8.0.0.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
+    "C:\\Users\\Stepan\\.nuget\\packages\\serilog.sinks.console\\5.0.1\\serilog.sinks.console.5.0.1.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "C:\\Users\\Stepan\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
