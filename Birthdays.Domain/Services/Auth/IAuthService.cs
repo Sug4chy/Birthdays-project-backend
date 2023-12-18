@@ -1,7 +1,7 @@
 ﻿using Data.Entities;
-using Web.Models;
+using Domain.Models;
 
-namespace Web.Services.Auth;
+namespace Domain.Services.Auth;
 
 public interface IAuthService
 {

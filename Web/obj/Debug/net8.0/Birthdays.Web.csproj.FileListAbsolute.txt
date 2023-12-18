@@ -115,3 +115,5 @@ C:\Users\Stepan\RiderProjects\Birthdays\Web\bin\Debug\net8.0\Microsoft.IdentityM
 C:\Users\Stepan\RiderProjects\Birthdays\Web\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\Stepan\RiderProjects\Birthdays\Web\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\Stepan\RiderProjects\Birthdays\Web\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\Stepan\RiderProjects\Birthdays\Web\bin\Debug\net8.0\Birthdays.Domain.dll
+C:\Users\Stepan\RiderProjects\Birthdays\Web\bin\Debug\net8.0\Birthdays.Domain.pdb

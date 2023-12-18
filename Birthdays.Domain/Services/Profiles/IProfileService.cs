@@ -1,6 +1,6 @@
 ﻿using Data.Entities;
 
-namespace Web.Services.Profiles;
+namespace Domain.Services.Profiles;
 
 public interface IProfileService
 {

@@ -4,11 +4,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Data.Entities;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Web.Models;
 
-namespace Web.Services.Auth;
+namespace Domain.Services.Auth;
 
 public class AuthService(UserManager<User> userManager, 
     SignInManager<User> signInManager, IConfiguration config) : IAuthService

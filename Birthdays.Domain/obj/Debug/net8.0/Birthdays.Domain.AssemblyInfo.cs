@@ -10,12 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("Birthdays.Data")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Birthdays.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1272816a9fa50c0e49b6cb93f9a17c2b9d1e6b2c")]
-[assembly: System.Reflection.AssemblyProductAttribute("Birthdays.Data")]
-[assembly: System.Reflection.AssemblyTitleAttribute("Birthdays.Data")]
+[assembly: System.Reflection.AssemblyProductAttribute("Birthdays.Domain")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Birthdays.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Создано классом WriteCodeFragment MSBuild.

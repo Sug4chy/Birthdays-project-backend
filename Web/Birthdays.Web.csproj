@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Birthdays.Domain\Birthdays.Domain.csproj" />
       <ProjectReference Include="..\Data\Birthdays.Data.csproj" />
     </ItemGroup>
 

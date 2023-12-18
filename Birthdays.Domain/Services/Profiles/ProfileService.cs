@@ -1,7 +1,7 @@
 ﻿using Data.Entities;
 using Data.Repositories;
 
-namespace Web.Services.Profiles;
+namespace Domain.Services.Profiles;
 
 public class ProfileService(IRepository<Profile> profilesDb) : IProfileService
 {

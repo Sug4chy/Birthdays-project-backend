@@ -1,7 +1,7 @@
 ﻿using Data.Entities;
-using Web.Handlers.Auth;
+using Domain.Requests.Auth;
 
-namespace Web.Services.Users;
+namespace Domain.Services.Users;
 
 public interface IUserService
 {

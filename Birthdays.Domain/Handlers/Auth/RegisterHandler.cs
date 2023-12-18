@@ -1,9 +1,11 @@
-﻿using Web.Models;
-using Web.Services.Auth;
-using Web.Services.Profiles;
-using Web.Services.Users;
+﻿using Domain.Models;
+using Domain.Requests.Auth;
+using Domain.Responses.Auth;
+using Domain.Services.Auth;
+using Domain.Services.Profiles;
+using Domain.Services.Users;
 
-namespace Web.Handlers.Auth;
+namespace Domain.Handlers.Auth;
 
 public class RegisterHandler(
     IAuthService authService, 
@@ -21,7 +23,7 @@ public class RegisterHandler(
             User = user, 
             Password = await authService.HashPassword(request.Password, ct)
         }, ct);
-        await profileService.CommitAsync();
+        await profileService.CommitAsync(ct);
 
         return new RegisterResponse
         {
@@ -29,20 +31,4 @@ public class RegisterHandler(
             Token = await authService.GenerateToken(user, ct)
         };
     }
-}
-
-public record RegisterRequest
-{
-    public required string Name { get; init; }
-    public required string Surname { get; init; }
-    public string? Patronymic { get; init; }
-    public DateTime BirthDate { get; init; }
-    public required string Email { get; init; }
-    public required string Password { get; init; }
-}
-
-public record RegisterResponse
-{
-    public required string Token { get; init; }
-    public required Guid ProfileId { get; init; }
 }

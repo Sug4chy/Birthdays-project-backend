@@ -1,6 +1,6 @@
 ﻿using Data.Entities;
 
-namespace Web.Models;
+namespace Domain.Models;
 
 public record RegisterModel
 {
