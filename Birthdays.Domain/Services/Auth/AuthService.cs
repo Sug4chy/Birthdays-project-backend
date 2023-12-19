@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 using Data.Entities;
@@ -13,16 +12,16 @@ namespace Domain.Services.Auth;
 public class AuthService(UserManager<User> userManager, 
     SignInManager<User> signInManager, IConfiguration config) : IAuthService
 {
-    public async Task<string> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
+    public async Task<Error?> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
     {
         var result = await userManager.CreateAsync(model.User, model.Password);
         if (!result.Succeeded)
         {
-            return result.Errors.First().Code;
+            return new Error { Code = result.Errors.First().Code, Message = result.Errors.First().Description };
         }
 
         await signInManager.SignInAsync(model.User, false);
-        return "";
+        return null;
     }
 
     public ValueTask<string> GenerateToken(User user, CancellationToken ct = default)

@@ -27,7 +27,7 @@ public class RegisterHandler(
         if (!validationResult.IsValid)
         {
             var errorsAsStrings = validationResult.Errors
-                .Select(e => e.ErrorCode)
+                .Select(e => new Error { Code = e.ErrorCode, Message = e.ErrorMessage })
                 .ToList();
             Log.Error($"{string.Join(", ", errorsAsStrings)} errors were occurred");
             return new WrapperResponseDto<RegisterResponse>
@@ -44,23 +44,19 @@ public class RegisterHandler(
         var profile = await profileService.CreateAsync(ct);
         var user = await userService.CreateUserAsync(request, profile, ct);
 
-        string possibleError = await authService.RegisterUserAsync(new RegisterModel
+        var possibleError = await authService.RegisterUserAsync(new RegisterModel
         {
             User = user,
             Password = request.Password
         }, ct);
         
-        if (possibleError != "")
+        if (possibleError is not null)
         {
             Log.Error($"{possibleError} error was occurred");
             return new WrapperResponseDto<RegisterResponse>
             {
-                Response = new RegisterResponse
-                {
-                    ProfileId = Guid.Empty,
-                    Token = ""
-                },
-                Errors = new List<string> { possibleError }
+                Response = null!,
+                Errors = new List<Error> { possibleError }
             };
         }
 

@@ -1,8 +1,11 @@
 ﻿using System.Text;
+using Data.Extensions;
+using Domain.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Web.Extensions;
+using Web.Middlewares;
 
 namespace Web;
 
@@ -13,7 +16,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.AddDataLayerServices(configuration);
+        services.AddDataLayerServices(configuration)
+            .WithIdentity();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -42,6 +46,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             .WriteTo.Console()
             .MinimumLevel.Debug()
             .CreateLogger();
+        
+        services.AddSingleton<ErrorHandlingMiddleware>();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -53,6 +59,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         }
         
         app.UseRouting();
+        app.UseMiddleware<ErrorHandlingMiddleware>();
         
         app.UseAuthentication();
         app.UseAuthorization();
