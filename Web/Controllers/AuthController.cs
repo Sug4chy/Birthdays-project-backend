@@ -3,6 +3,7 @@ using Domain.Requests.Auth;
 using Domain.Responses;
 using Domain.Responses.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Web.Extensions;
 
 namespace Web.Controllers;
 
@@ -15,5 +16,5 @@ public class AuthController : ControllerBase
         [FromBody] RegisterRequest request,
         [FromServices] RegisterHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request, ct);
+        => handler.Handle(request, ct).WrappedWithLinks();
 }

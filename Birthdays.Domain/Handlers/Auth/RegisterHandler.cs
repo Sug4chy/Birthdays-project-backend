@@ -1,7 +1,7 @@
 ﻿using Data.Context;
+using Domain.Exceptions;
 using Domain.Models;
 using Domain.Requests.Auth;
-using Domain.Responses;
 using Domain.Responses.Auth;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
@@ -19,25 +19,26 @@ public class RegisterHandler(
     PasswordValidator passwordValidator
 )
 {
-    public async Task<WrapperResponseDto<RegisterResponse>> Handle(
+    public async Task<RegisterResponse> Handle(
         RegisterRequest request, CancellationToken ct = default)
     {
-        Log.Information("Register request was received.");
+        Log.Information($"Register request from user {request.Email} was received.");
         var validationResult = await passwordValidator.ValidateAsync(request.Password, ct);
         if (!validationResult.IsValid)
         {
-            var errorsAsStrings = validationResult.Errors
+            var errors = validationResult.Errors
                 .Select(e => new Error { Code = e.ErrorCode, Message = e.ErrorMessage })
                 .ToList();
-            Log.Error($"{string.Join(", ", errorsAsStrings)} errors were occurred");
-            return new WrapperResponseDto<RegisterResponse>
+            Log.Error($"\"{string.Join(", ", errors.Select(e => e.Message))}\" " +
+                      $"errors were occurred while validating password for user {request.Email}");
+            throw new PasswordValidationException
             {
                 Response = new RegisterResponse
                 {
                     ProfileId = Guid.Empty,
-                    Token = ""
+                    Token = null!
                 },
-                Errors = errorsAsStrings
+                Errors = errors
             };
         }
 
@@ -49,28 +50,29 @@ public class RegisterHandler(
             User = user,
             Password = request.Password
         }, ct);
-        
+
         if (possibleError is not null)
         {
-            Log.Error($"{possibleError} error was occurred");
-            return new WrapperResponseDto<RegisterResponse>
+            Log.Error($"\"{possibleError.Message}\" error was occurred while registering " +
+                      $"user {request.Email}");
+            throw new DuplicateUsernameException
             {
-                Response = null!,
-                Errors = new List<Error> { possibleError }
+                Response = new RegisterResponse
+                {
+                    ProfileId = Guid.Empty,
+                    Token = null!
+                },
+                Error = possibleError
             };
         }
 
         await context.SaveChangesAsync(ct);
 
         Log.Information("Register response was successfully sent");
-        return new WrapperResponseDto<RegisterResponse>
+        return new RegisterResponse
         {
-            Response = new RegisterResponse
-            {
-                ProfileId = profile.Id,
-                Token = await authService.GenerateToken(user, ct)
-            },
-            Errors = null
+            ProfileId = profile.Id,
+            Token = await authService.GenerateToken(user, ct)
         };
     }
 }

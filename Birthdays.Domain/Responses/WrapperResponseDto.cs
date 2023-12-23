@@ -4,7 +4,7 @@ namespace Domain.Responses;
 
 public record WrapperResponseDto<TResponse> where TResponse : IResponse
 {
-    public required TResponse Response { get; init; }
+    public required TResponse? Response { get; init; }
     public List<Error>? Errors { get; init; }
-    public List<string> Links { get; init; } = new();
+    public List<string>? Links { get; init; }
 }
