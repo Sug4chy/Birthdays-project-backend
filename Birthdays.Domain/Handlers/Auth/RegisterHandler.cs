@@ -39,10 +39,7 @@ public class RegisterHandler(
         {
             Log.Error($"\"{possibleError.Message}\" error was occurred while registering " +
                       $"user {request.Email}");
-            throw new IdentityException
-            {
-                Errors = new[] { new Error { Code = possibleError.Code, Message = possibleError.Message } }
-            };
+            IdentityException.ThrowByError(possibleError);
         }
 
         await context.SaveChangesAsync(ct);
