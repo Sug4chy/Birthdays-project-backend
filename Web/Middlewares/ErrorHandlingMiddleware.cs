@@ -2,6 +2,8 @@
 using Domain.Exceptions;
 using Domain.Models;
 using Domain.Responses;
+using System.Net.Mime;
+using FluentValidation;
 
 namespace Web.Middlewares;
 
@@ -15,30 +17,43 @@ public class ErrorHandlingMiddleware : IMiddleware
         }
         catch (Exception ex)
         {
-            string newContent = string.Empty;
+            string newContent;
             switch (ex)
             {
-                case PasswordValidationException passwordValidationException:
+                case ValidationException validationException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     newContent = JsonSerializer.Serialize(new WrapperResponseDto<IResponse>
                     {
                         Response = null,
-                        Errors = passwordValidationException.Errors.ToList(),
+                        Errors = validationException.Errors
+                            .Select(vf => new Error
+                            {
+                                Code = vf.ErrorCode,
+                                Message = vf.ErrorMessage
+                            }),
                         Links = null
                     });
                     break;
-                case DuplicateUsernameException duplicateUsernameException:
-                    context.Response.StatusCode = StatusCodes.Status409Conflict;
+                case CustomExceptionBase customExceptionBase:
+                    context.Response.StatusCode = customExceptionBase.StatusCode;
                     newContent = JsonSerializer.Serialize(new WrapperResponseDto<IResponse>
                     {
                         Response = null,
-                        Errors = new List<Error> { duplicateUsernameException.Error },
+                        Errors = customExceptionBase.Errors,
                         Links = null
+                    });
+                    break;
+                default:
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    newContent = JsonSerializer.Serialize(new WrapperResponseDto<IResponse>
+                    {
+                        Response = null,
+                        Errors = new[] { new Error { Code = ex.GetType().ToString(), Message = ex.Message } }
                     });
                     break;
             }
 
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = MediaTypeNames.Application.Json;
             await context.Response.WriteAsync(newContent);
         }
     }

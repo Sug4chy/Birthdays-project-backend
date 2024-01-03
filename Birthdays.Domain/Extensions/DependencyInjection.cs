@@ -26,7 +26,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddValidators(this IServiceCollection services)
     {
-        services.AddScoped<PasswordValidator>();
+        services.AddScoped<RegisterRequestValidator>();
         return services;
     }
 
