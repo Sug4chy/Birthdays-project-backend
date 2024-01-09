@@ -1,7 +1,11 @@
-﻿using Data.Context;
-using Data.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Text;
+using Data.Extensions;
+using Domain.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Web.Extensions;
+using Web.Middlewares;
 
 namespace Web;
 
@@ -12,16 +16,38 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
-        services.AddDbContext<AppDbContext>((serviceProvider, options) =>
-        {
-            var updateAuditableInterceptor = serviceProvider.GetRequiredService<UpdateAuditableEntitiesInterceptor>();
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-                .AddInterceptors(updateAuditableInterceptor);
-        });
+        services.AddDataLayerServices(configuration)
+            .WithIdentity();
+        
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration.GetValue<string>("Issuer"),
+                    ValidateAudience = true,
+                    ValidAudience = configuration.GetValue<string>("Audience"),
+                    ValidateLifetime = true,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                            configuration.GetValue<string>("SymmetricSecurityKey")!)),
+                    ValidateIssuerSigningKey = true
+                };
+            });
 
-        services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>();
+        services.AddControllers();
+        
+        services.AddValidators();
+        services.AddApplicationServices();
+        services.AddHandlers();
+
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .MinimumLevel.Debug()
+            .CreateLogger();
+        
+        services.AddSingleton<ErrorHandlingMiddleware>();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -31,7 +57,13 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        app.UseHttpsRedirection();
+        
+        app.UseRouting();
+        app.UseMiddleware<ErrorHandlingMiddleware>();
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
+        app.UseEndpoints(e => e.MapControllers());
     }
 }

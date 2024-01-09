@@ -9,7 +9,7 @@ internal static class Program
             {
                 webBuilder.UseStartup<Startup>()
                     .UseConfiguration(new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.json")
+                        .AddJsonFile("development_config.json")
                         .Build());
             })
             .Build()

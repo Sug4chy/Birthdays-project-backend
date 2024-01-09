@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public class Repository<TEntity>(DbContext context) : IRepository<TEntity> 
+public class Repository<TEntity>(AppDbContext context) : IRepository<TEntity> 
     where TEntity : class
 {
     private DbSet<TEntity> Set => context.Set<TEntity>();
@@ -10,7 +11,7 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
     public Task<IQueryable<TEntity>> Select()
         => Task.FromResult(Set.AsQueryable());
 
-    public async Task CreateAndSaveAsync(TEntity entity, 
+    public async Task AddAsync(TEntity entity, 
         CancellationToken ct = default)
         => await Set.AddAsync(entity, ct);
 
