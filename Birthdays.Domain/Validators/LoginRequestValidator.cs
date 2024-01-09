@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Domain.Validators;
 
-public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+public class LoginRequestValidator: AbstractValidator<LoginRequest>
 {
-    public RegisterRequestValidator()
+    public LoginRequestValidator()
     {
         RuleFor(req => req.Password)
             .NotNull()

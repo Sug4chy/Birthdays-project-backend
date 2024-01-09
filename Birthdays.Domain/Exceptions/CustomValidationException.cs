@@ -4,8 +4,5 @@ using FluentValidation.Results;
 
 namespace Domain.Exceptions;
 
-public class CustomValidationException(Error error) : ValidationException(error.Message)
-{
-    public new IEnumerable<ValidationFailure> Errors { get; private set; } 
-        = new[] { new ValidationFailure { ErrorCode = error.Code, ErrorMessage = error.Message } };
-}
+public class CustomValidationException(Error error) : ValidationException(error.Message,
+    new[] { new ValidationFailure { ErrorCode = error.Code, ErrorMessage = error.Message } });

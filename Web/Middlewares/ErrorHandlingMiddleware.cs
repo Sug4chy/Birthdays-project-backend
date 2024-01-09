@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using Domain.Exceptions;
 using Domain.Models;
-using Domain.Responses;
 using System.Net.Mime;
+using Domain.DTO.Responses;
 using FluentValidation;
 
 namespace Web.Middlewares;
@@ -30,7 +30,7 @@ public class ErrorHandlingMiddleware : IMiddleware
                             {
                                 Code = vf.ErrorCode,
                                 Message = vf.ErrorMessage
-                            }),
+                            }).ToArray(),
                         Links = null
                     });
                     break;
@@ -39,7 +39,7 @@ public class ErrorHandlingMiddleware : IMiddleware
                     newContent = JsonSerializer.Serialize(new WrapperResponseDto<IResponse>
                     {
                         Response = null,
-                        Errors = customExceptionBase.Errors,
+                        Errors = customExceptionBase.Errors.ToArray(),
                         Links = null
                     });
                     break;
@@ -48,7 +48,8 @@ public class ErrorHandlingMiddleware : IMiddleware
                     newContent = JsonSerializer.Serialize(new WrapperResponseDto<IResponse>
                     {
                         Response = null,
-                        Errors = new[] { new Error { Code = ex.GetType().ToString(), Message = ex.Message } }
+                        Errors = new[] { new Error { Code = ex.GetType().ToString(), Message = ex.Message } },
+                        Links = null
                     });
                     break;
             }

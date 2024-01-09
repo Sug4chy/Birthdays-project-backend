@@ -1,9 +1,11 @@
 ﻿using Data.Entities;
-using Domain.Requests.Auth;
+using Data.Repositories;
+using Domain.DTO.Requests.Auth;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services.Users;
 
-public class UserService : IUserService
+public class UserService(IRepository<Profile> profileRepo) : IUserService
 {
     public Task<User> CreateUserAsync(RegisterRequest request, 
         Profile profile, CancellationToken ct = default)
@@ -18,4 +20,14 @@ public class UserService : IUserService
             Email = request.Email,
             BirthDate = DateOnly.FromDateTime(request.BirthDate)
         });
+
+    public async Task<User?> GetUserByEmail(string email, CancellationToken ct = default)
+    {
+        var profile = (await profileRepo.Select())
+            .Include(p => p.User)
+            .Include(p => p.SubscriptionsAsSubscriber)
+            .Include(p => p.SubscriptionsAsBirthdayMan)
+            .FirstOrDefault(p => p.User!.Email == email);
+        return profile?.User;
+    }
 }

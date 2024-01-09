@@ -13,6 +13,7 @@ public static class DependencyInjection
     public static IServiceCollection AddHandlers(this IServiceCollection services)
     {
         services.AddScoped<RegisterHandler>();
+        services.AddScoped<LoginHandler>();
         return services;
     }
 
@@ -27,6 +28,7 @@ public static class DependencyInjection
     public static IServiceCollection AddValidators(this IServiceCollection services)
     {
         services.AddScoped<RegisterRequestValidator>();
+        services.AddScoped<LoginRequestValidator>();
         return services;
     }
 

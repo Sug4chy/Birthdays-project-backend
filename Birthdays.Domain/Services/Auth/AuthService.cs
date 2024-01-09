@@ -17,10 +17,27 @@ public class AuthService(UserManager<User> userManager,
         var result = await userManager.CreateAsync(model.User, model.Password);
         if (!result.Succeeded)
         {
-            return new Error { Code = result.Errors.First().Code, Message = result.Errors.First().Description };
+            var identityError = result.Errors.First();
+            return new Error { Code = identityError.Code, Message = identityError.Description };
         }
 
         await signInManager.SignInAsync(model.User, false);
+        return null;
+    }
+
+    public async Task<Error?> LoginUserAsync(LoginModel model, CancellationToken ct = default)
+    {
+        var result = await signInManager.PasswordSignInAsync(model.Email,
+            model.Password, false, false);
+        if (!result.Succeeded)
+        {
+            return new Error 
+            { 
+                Code = "LoginOrPasswordInvalid", 
+                Message = "Login or/and password is/are not valid" 
+            };
+        }
+
         return null;
     }
 

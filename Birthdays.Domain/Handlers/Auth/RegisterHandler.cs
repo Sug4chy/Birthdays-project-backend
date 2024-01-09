@@ -1,8 +1,10 @@
-﻿using Data.Context;
+﻿using AutoMapper;
+using Data.Context;
+using Domain.DTO;
+using Domain.DTO.Requests.Auth;
+using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Models;
-using Domain.Requests.Auth;
-using Domain.Responses.Auth;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
 using Domain.Services.Users;
@@ -17,7 +19,8 @@ public class RegisterHandler(
     IUserService userService,
     IProfileService profileService,
     AppDbContext context,
-    RegisterRequestValidator requestValidator
+    RegisterRequestValidator requestValidator,
+    IMapper mapper
 )
 {
     public async Task<RegisterResponse> Handle(
@@ -44,11 +47,11 @@ public class RegisterHandler(
 
         await context.SaveChangesAsync(ct);
 
-        Log.Information("Register response was successfully sent");
+        Log.Information($"Register response was successfully sent for user {request.Email}");
         return new RegisterResponse
         {
-            ProfileId = profile.Id,
-            Token = await authService.GenerateToken(user, ct)
+            Token = await authService.GenerateToken(user, ct),
+            User = mapper.Map<UserDto>(user)
         };
     }
 }

@@ -1,7 +1,7 @@
-﻿using Domain.Handlers.Auth;
-using Domain.Requests.Auth;
-using Domain.Responses;
-using Domain.Responses.Auth;
+﻿using Domain.DTO.Requests.Auth;
+using Domain.DTO.Responses;
+using Domain.DTO.Responses.Auth;
+using Domain.Handlers.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Web.Extensions;
 
@@ -15,6 +15,13 @@ public class AuthController : ControllerBase
     public Task<WrapperResponseDto<RegisterResponse>> Register(
         [FromBody] RegisterRequest request,
         [FromServices] RegisterHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(request, ct).WrappedWithLinks();
+
+    [HttpPost("login")]
+    public Task<WrapperResponseDto<LoginResponse>> Login(
+        [FromBody] LoginRequest request,
+        [FromServices] LoginHandler handler,
         CancellationToken ct = default)
         => handler.Handle(request, ct).WrappedWithLinks();
 }

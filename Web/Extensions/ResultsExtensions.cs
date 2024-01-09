@@ -1,4 +1,4 @@
-﻿using Domain.Responses;
+﻿using Domain.DTO.Responses;
 
 namespace Web.Extensions;
 
@@ -13,7 +13,7 @@ public static class ResultsExtensions
         {
             Response = taskResult,
             Errors = null,
-            Links = new List<string>()
+            Links = Array.Empty<string>()
         };
     }
 }

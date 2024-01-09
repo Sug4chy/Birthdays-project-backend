@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Data.Extensions;
 using Domain.Extensions;
+using Domain.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -40,6 +41,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         
         services.AddValidators();
         services.AddApplicationServices();
+        services.AddAutoMapper(typeof(AppMappingProfile));
         services.AddHandlers();
 
         Log.Logger = new LoggerConfiguration()
