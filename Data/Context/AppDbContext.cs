@@ -4,14 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Context;
 
-public sealed class AppDbContext : IdentityDbContext<User>
+public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options)
-    {
-        Database.EnsureCreated();
-    }
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

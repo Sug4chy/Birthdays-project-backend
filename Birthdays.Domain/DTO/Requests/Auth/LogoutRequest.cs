@@ -2,5 +2,5 @@
 
 public record LogoutRequest
 {
-    public required UserDto User { get; init; }
+    public required string Email { get; init; }
 }

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Data.Entities;
+using Data.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Domain.Services.Auth;
 
 public class AuthService(UserManager<User> userManager, 
-    SignInManager<User> signInManager, IConfiguration config) : IAuthService
+    SignInManager<User> signInManager, IRepository<User> userRepo, IConfiguration config) : IAuthService
 {
     public async Task<Error?> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
     {
@@ -41,11 +42,22 @@ public class AuthService(UserManager<User> userManager,
         return null;
     }
 
-    public Task LogoutUserAsync(CancellationToken ct = default)
-        => signInManager.SignOutAsync();
-    
+    public async Task<Error?> LogoutUserAsync(User user, CancellationToken ct = default)
+    {
+        if (user.CurrentAccessToken is null)
+        {
+            return new Error
+                { Code = "Unauthenticated", Message = $"User with email {user.Email} is not authenticated" };
+        }
+        
+        await signInManager.SignOutAsync();
+        user.CurrentAccessToken = null;
+        await userRepo.Update(user);
+        await userRepo.CommitChangesAsync(ct);
+        return null;
+    }
 
-    public ValueTask<string> GenerateToken(User user, CancellationToken ct = default)
+    public async Task<string> GenerateToken(User user, CancellationToken ct = default)
     {
         var claims = new List<Claim>
         {
@@ -63,7 +75,12 @@ public class AuthService(UserManager<User> userManager,
                 GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
         );
 
-        return new ValueTask<string>(new JwtSecurityTokenHandler().WriteToken(jwt));
+        string? token = new JwtSecurityTokenHandler().WriteToken(jwt);
+        user.CurrentAccessToken = token;
+        await userRepo.Update(user);
+        await userRepo.CommitChangesAsync(ct);
+        
+        return token;
     }
     
     private SymmetricSecurityKey GetSymmetricSecurityKey()

@@ -11,6 +11,7 @@ public class User : IdentityUser, IAuditableEntity
     public required string Surname { get; set; }
     public string? Patronymic { get; set; }
     public required DateOnly BirthDate { get; set; }
+    public string? CurrentAccessToken { get; set; }
     public DateTime CreatingTime { get; set; }
     public DateTime EditingTime { get; set; }
     public DateTime? DeletingTime { get; set; }
