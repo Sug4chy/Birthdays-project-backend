@@ -14,6 +14,7 @@ public static class DependencyInjection
     {
         services.AddScoped<RegisterHandler>();
         services.AddScoped<LoginHandler>();
+        services.AddScoped<LogoutHandler>();
         return services;
     }
 

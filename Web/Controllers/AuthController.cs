@@ -2,6 +2,7 @@
 using Domain.DTO.Responses;
 using Domain.DTO.Responses.Auth;
 using Domain.Handlers.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Extensions;
 
@@ -22,6 +23,14 @@ public class AuthController : ControllerBase
     public Task<WrapperResponseDto<LoginResponse>> Login(
         [FromBody] LoginRequest request,
         [FromServices] LoginHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(request, ct).WrappedWithLinks();
+
+    [Authorize]
+    [HttpPost("logout")]
+    public Task<WrapperResponseDto<LogoutResponse>> Logout(
+        [FromBody] LogoutRequest request,
+        [FromServices] LogoutHandler handler,
         CancellationToken ct = default)
         => handler.Handle(request, ct).WrappedWithLinks();
 }

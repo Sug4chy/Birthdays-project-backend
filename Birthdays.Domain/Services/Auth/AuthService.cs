@@ -41,6 +41,10 @@ public class AuthService(UserManager<User> userManager,
         return null;
     }
 
+    public Task LogoutUserAsync(CancellationToken ct = default)
+        => signInManager.SignOutAsync();
+    
+
     public ValueTask<string> GenerateToken(User user, CancellationToken ct = default)
     {
         var claims = new List<Claim>

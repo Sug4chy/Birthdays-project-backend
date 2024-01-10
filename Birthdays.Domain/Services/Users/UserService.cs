@@ -21,13 +21,13 @@ public class UserService(IRepository<Profile> profileRepo) : IUserService
             BirthDate = DateOnly.FromDateTime(request.BirthDate)
         });
 
-    public async Task<User?> GetUserByEmail(string email, CancellationToken ct = default)
+    public async Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
     {
-        var profile = (await profileRepo.Select())
+        var profile = await (await profileRepo.Select())
             .Include(p => p.User)
             .Include(p => p.SubscriptionsAsSubscriber)
             .Include(p => p.SubscriptionsAsBirthdayMan)
-            .FirstOrDefault(p => p.User!.Email == email);
+            .FirstOrDefaultAsync(p => p.User!.Email == email, ct);
         return profile?.User;
     }
 }

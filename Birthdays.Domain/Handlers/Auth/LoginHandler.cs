@@ -32,7 +32,7 @@ public class LoginHandler(
             IdentityException.ThrowByError(possibleError);
         }
 
-        var user = await userService.GetUserByEmail(request.Email, ct);
+        var user = await userService.GetUserByEmailAsync(request.Email, ct);
         
         Log.Information($"Login response was successfully sent for user {request.Email}");
         return new LoginResponse

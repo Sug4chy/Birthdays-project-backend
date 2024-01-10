@@ -8,6 +8,6 @@ public interface IUserService
     Task<User> CreateUserAsync(RegisterRequest request, 
         Profile profile, CancellationToken ct = default);
 
-    Task<User?> GetUserByEmail(string email, 
+    Task<User?> GetUserByEmailAsync(string email, 
         CancellationToken ct = default);
 }
