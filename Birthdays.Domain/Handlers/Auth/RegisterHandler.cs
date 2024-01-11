@@ -7,8 +7,10 @@ using Domain.Exceptions;
 using Domain.Models;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
+using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Domain.Handlers.Auth;
@@ -19,7 +21,9 @@ public class RegisterHandler(
     IProfileService profileService,
     AppDbContext context,
     RegisterRequestValidator requestValidator,
-    IMapper mapper
+    IMapper mapper,
+    ITokenService tokenService,
+    IConfiguration config
 )
 {
     public async Task<RegisterResponse> Handle(
@@ -48,12 +52,20 @@ public class RegisterHandler(
             IdentityException.ThrowByError(registerResult.Error);
         }
 
+        string accessToken = await tokenService.GenerateAccessToken(user, ct);
+        string refreshToken = await tokenService.GenerateRefreshToken(ct);
+
+        user.CurrentRefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow
+            .AddDays(config.GetValue<int>("RefreshTokenExpiresTime"));
+        
         await context.SaveChangesAsync(ct);
 
         Log.Information($"Register response was successfully sent for user {request.Email}");
         return new RegisterResponse
         {
-            Token = await authService.GenerateToken(user, ct),
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
             User = mapper.Map<UserDto>(user)
         };
     }

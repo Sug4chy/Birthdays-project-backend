@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Data.Context;
 using Domain.DTO;
 using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Models;
 using Domain.Services.Auth;
+using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Domain.Handlers.Auth;
@@ -15,7 +18,10 @@ public class LoginHandler(
     LoginRequestValidator validator,
     IAuthService authService,
     IMapper mapper,
-    IUserService userService)
+    IUserService userService,
+    ITokenService tokenService,
+    IConfiguration config,
+    AppDbContext context)
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken ct = default)
     {
@@ -36,11 +42,22 @@ public class LoginHandler(
         }
 
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
+        NotFoundException.ThrowIfNull(user, $"User with email {request.Email} wasn't found");
+
+        string accessToken = await tokenService.GenerateAccessToken(user!, ct);
+        string refreshToken = await tokenService.GenerateRefreshToken(ct);
+        
+        user!.CurrentRefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow
+            .AddDays(config.GetValue<int>("RefreshTokenExpiresTime"));
+        
+        await context.SaveChangesAsync(ct);
         
         Log.Information($"Login response was successfully sent for user {request.Email}");
         return new LoginResponse
         {
-            Token = await authService.GenerateToken(user!, ct),
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
             User = mapper.Map<UserDto>(user)
         };
     }

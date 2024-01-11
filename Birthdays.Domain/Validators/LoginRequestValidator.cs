@@ -1,7 +1,6 @@
 ﻿using Domain.DTO.Requests.Auth;
 using Domain.Results;
 using FluentValidation;
-using FluentValidation.Results;
 
 namespace Domain.Validators;
 

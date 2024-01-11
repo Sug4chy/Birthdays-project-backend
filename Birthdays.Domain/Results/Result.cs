@@ -25,9 +25,10 @@ public class Result
     public static Result Failure(Error error) => new(false, error);
 
     public static Result FromValidationResult(ValidationResult validationResult)
-        => new(validationResult.IsValid, 
-            Error.FromValidationFailure(validationResult.Errors.First()));
-
+        => validationResult.IsValid
+            ? Success()
+            : Failure(Error.FromValidationFailure(validationResult.Errors[0]));
+    
     public static Result FromIdentityError(IdentityError error)
         => new(false, Error.FromIdentityError(error));
 }

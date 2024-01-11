@@ -13,5 +13,6 @@
   "Audience": "BirthdaysClient",
   "SymmetricSecurityKey": "1234567890_secret_1234567890_another_secret_1234567890",
   "Salt": "ILoveMyLittlePony!",
-  "TokenExpiresTime": 10
+  "AccessTokenExpiresTime": 10,
+  "RefreshTokenExpiresTime": 21
 }

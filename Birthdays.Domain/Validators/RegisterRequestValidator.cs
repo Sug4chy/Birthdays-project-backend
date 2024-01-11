@@ -20,7 +20,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     
     public new async Task<Result> ValidateAsync(RegisterRequest request, CancellationToken ct = default)
     {
-        var result = await base.ValidateAsync(request);
+        var result = await base.ValidateAsync(request, ct);
         return Result.FromValidationResult(result);
     }
 }

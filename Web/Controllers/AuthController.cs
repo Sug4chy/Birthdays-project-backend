@@ -33,4 +33,11 @@ public class AuthController : ControllerBase
         [FromServices] LogoutHandler handler,
         CancellationToken ct = default)
         => handler.Handle(request, ct).WrappedWithLinks();
+
+    [HttpPost("refresh")]
+    public Task<WrapperResponseDto<RefreshResponse>> Refresh(
+        [FromBody] RefreshRequest request,
+        [FromServices] RefreshHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(request, ct).WrappedWithLinks();
 }
