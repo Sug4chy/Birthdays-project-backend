@@ -1,0 +1,11 @@
+﻿namespace Domain.Results;
+
+public static class AuthErrors
+{
+    public static readonly Error SignInError 
+        = new("LoginOrPasswordInvalid", "Login or/and password is/are not valid");
+
+    public static Error UnauthenticatedError(string email)
+        => new(nameof(UnauthenticatedError), 
+            $"User with email {email} is not authenticated");
+}

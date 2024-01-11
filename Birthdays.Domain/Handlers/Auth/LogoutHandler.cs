@@ -15,13 +15,13 @@ public class LogoutHandler(IAuthService authService, IUserService userService)
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
         NotFoundException.ThrowIfNull(user, $"User with email {request.Email} wasn't found");
         
-        var possibleError = await authService.LogoutUserAsync(user!, ct);
-        if (possibleError is not null)
+        var logoutResult = await authService.LogoutUserAsync(user!, ct);
+        if (!logoutResult.IsSuccess)
         {
-            Log.Error(possibleError.Message);
+            Log.Error(logoutResult.Error.Description);
             throw new IdentityException
             {
-                Errors = new[] { possibleError }
+                Errors = new[] { logoutResult.Error }
             };
         }
         

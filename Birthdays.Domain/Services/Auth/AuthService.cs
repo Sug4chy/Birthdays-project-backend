@@ -4,6 +4,7 @@ using System.Text;
 using Data.Entities;
 using Data.Repositories;
 using Domain.Models;
+using Domain.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,48 +14,38 @@ namespace Domain.Services.Auth;
 public class AuthService(UserManager<User> userManager, 
     SignInManager<User> signInManager, IRepository<User> userRepo, IConfiguration config) : IAuthService
 {
-    public async Task<Error?> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
+    public async Task<Result> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
     {
         var result = await userManager.CreateAsync(model.User, model.Password);
         if (!result.Succeeded)
         {
             var identityError = result.Errors.First();
-            return new Error { Code = identityError.Code, Message = identityError.Description };
+            return Result.FromIdentityError(identityError);
         }
 
         await signInManager.SignInAsync(model.User, false);
-        return null;
+        return Result.Success();
     }
 
-    public async Task<Error?> LoginUserAsync(LoginModel model, CancellationToken ct = default)
+    public async Task<Result> LoginUserAsync(LoginModel model, CancellationToken ct = default)
     {
         var result = await signInManager.PasswordSignInAsync(model.Email,
             model.Password, false, false);
-        if (!result.Succeeded)
-        {
-            return new Error 
-            { 
-                Code = "LoginOrPasswordInvalid", 
-                Message = "Login or/and password is/are not valid" 
-            };
-        }
-
-        return null;
+        return result.Succeeded ? Result.Success() : Result.Failure(AuthErrors.SignInError);
     }
 
-    public async Task<Error?> LogoutUserAsync(User user, CancellationToken ct = default)
+    public async Task<Result> LogoutUserAsync(User user, CancellationToken ct = default)
     {
         if (user.CurrentAccessToken is null)
         {
-            return new Error
-                { Code = "Unauthenticated", Message = $"User with email {user.Email} is not authenticated" };
+            return Result.Failure(AuthErrors.UnauthenticatedError(user.Email!));
         }
         
         await signInManager.SignOutAsync();
         user.CurrentAccessToken = null;
         await userRepo.Update(user);
         await userRepo.CommitChangesAsync(ct);
-        return null;
+        return Result.Success();
     }
 
     public async Task<string> GenerateToken(User user, CancellationToken ct = default)

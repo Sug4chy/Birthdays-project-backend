@@ -1,4 +1,5 @@
 ﻿using Domain.DTO.Requests.Auth;
+using Domain.Results;
 using FluentValidation;
 
 namespace Domain.Validators;
@@ -15,5 +16,11 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .Must(p => p.Any(char.IsDigit))
             .WithErrorCode("NoDigitsValidator")
             .WithMessage("Password must include at least 1 digit");
+    }
+    
+    public new async Task<Result> ValidateAsync(RegisterRequest request, CancellationToken ct = default)
+    {
+        var result = await base.ValidateAsync(request);
+        return Result.FromValidationResult(result);
     }
 }

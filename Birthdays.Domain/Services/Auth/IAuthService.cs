@@ -1,12 +1,13 @@
 ﻿using Data.Entities;
 using Domain.Models;
+using Domain.Results;
 
 namespace Domain.Services.Auth;
 
 public interface IAuthService
 {
-    Task<Error?> RegisterUserAsync(RegisterModel model, CancellationToken ct = default);
-    Task<Error?> LoginUserAsync(LoginModel model, CancellationToken ct = default);
-    Task<Error?> LogoutUserAsync(User user, CancellationToken ct = default);
+    Task<Result> RegisterUserAsync(RegisterModel model, CancellationToken ct = default);
+    Task<Result> LoginUserAsync(LoginModel model, CancellationToken ct = default);
+    Task<Result> LogoutUserAsync(User user, CancellationToken ct = default);
     Task<string> GenerateToken(User user, CancellationToken ct = default);
 }

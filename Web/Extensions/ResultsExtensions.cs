@@ -12,7 +12,6 @@ public static class ResultsExtensions
         return new WrapperResponseDto<TResponse>
         {
             Response = taskResult,
-            Errors = null,
             Links = Array.Empty<string>()
         };
     }
