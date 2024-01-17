@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Data.Extensions;
+using Domain.Configs;
 using Domain.Extensions;
 using Domain.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +15,9 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services.Configure<JwtConfigurationOptions>(
+            configuration.GetSection(JwtConfigurationOptions.Position));
+        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 

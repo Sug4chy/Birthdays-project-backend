@@ -2,12 +2,16 @@
 using Data.Repositories;
 using Domain.Models;
 using Domain.Results;
+using Domain.Services.Tokens;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Services.Auth;
 
-public class AuthService(UserManager<User> userManager, 
-    SignInManager<User> signInManager, IRepository<User> userRepo) : IAuthService
+public class AuthService(
+    UserManager<User> userManager, 
+    SignInManager<User> signInManager, 
+    IRepository<User> userRepo,
+    ITokenService tokenService) : IAuthService
 {
     public async Task<Result> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
     {
@@ -35,5 +39,13 @@ public class AuthService(UserManager<User> userManager,
         user.RefreshTokenExpiryTime = DateTime.MinValue;
         await userRepo.CommitChangesAsync(ct);
         return Result.Success();
+    }
+
+    public string GiveUserRefreshToken(User user)
+    {
+        var refreshTokenModel = tokenService.GenerateRefreshToken();
+        user.CurrentRefreshToken = refreshTokenModel.Token;
+        user.RefreshTokenExpiryTime = refreshTokenModel.TokenExpiryTime;
+        return refreshTokenModel.Token;
     }
 }

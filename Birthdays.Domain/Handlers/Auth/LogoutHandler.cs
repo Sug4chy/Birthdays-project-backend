@@ -18,7 +18,8 @@ public class LogoutHandler(IAuthService authService, IUserService userService)
         var logoutResult = await authService.LogoutUserAsync(user!, ct);
         if (!logoutResult.IsSuccess)
         {
-            Log.Error(logoutResult.Error.Description);
+            Log.Error($"{logoutResult.Error.Description} error occurred while " +
+                      $"logging out user with email {user!.Email}");
             throw new IdentityException
             {
                 Errors = new[] { logoutResult.Error }

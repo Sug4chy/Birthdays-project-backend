@@ -8,8 +8,8 @@ public class Repository<TEntity>(AppDbContext context) : IRepository<TEntity>
 {
     private DbSet<TEntity> Set => context.Set<TEntity>();
 
-    public Task<IQueryable<TEntity>> Select()
-        => Task.FromResult(Set.AsQueryable());
+    public IQueryable<TEntity> Select()
+        => Set.AsQueryable();
 
     public async Task AddAsync(TEntity entity, 
         CancellationToken ct = default)

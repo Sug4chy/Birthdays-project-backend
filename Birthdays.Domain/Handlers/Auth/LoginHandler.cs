@@ -9,7 +9,6 @@ using Domain.Services.Auth;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Domain.Handlers.Auth;
@@ -20,7 +19,6 @@ public class LoginHandler(
     IMapper mapper,
     IUserService userService,
     ITokenService tokenService,
-    IConfiguration config,
     AppDbContext context)
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken ct = default)
@@ -44,12 +42,8 @@ public class LoginHandler(
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
         NotFoundException.ThrowIfNull(user, $"User with email {request.Email} wasn't found");
 
-        string accessToken = await tokenService.GenerateAccessToken(user!, ct);
-        string refreshToken = await tokenService.GenerateRefreshToken(ct);
-        
-        user!.CurrentRefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow
-            .AddDays(config.GetValue<int>("RefreshTokenExpiresTime"));
+        string accessToken = tokenService.GenerateAccessToken(user!);
+        string refreshToken = authService.GiveUserRefreshToken(user!);
         
         await context.SaveChangesAsync(ct);
         

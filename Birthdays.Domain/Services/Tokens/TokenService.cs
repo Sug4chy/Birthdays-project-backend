@@ -3,16 +3,20 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Data.Entities;
+using Domain.Configs;
 using Domain.Exceptions;
+using Domain.Models;
 using Domain.Results;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Domain.Services.Tokens;
 
-public class TokenService(IConfiguration config) : ITokenService
+public class TokenService(IOptions<JwtConfigurationOptions> options) : ITokenService
 {
-    public ValueTask<string> GenerateAccessToken(User user, CancellationToken ct = default)
+    private readonly JwtConfigurationOptions _jwtConfigurationOptions = options.Value;
+    
+    public string GenerateAccessToken(User user)
     {
         var claims = new List<Claim>
         {
@@ -22,33 +26,38 @@ public class TokenService(IConfiguration config) : ITokenService
         };
         
         var jwt = new JwtSecurityToken(
-            issuer: config.GetValue<string>("Issuer"),
-            audience: config.GetValue<string>("Audience"),
+            issuer: _jwtConfigurationOptions.Issuer,
+            audience: _jwtConfigurationOptions.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(config.GetValue<int>("AccessTokenExpiresTime")),
+            expires: DateTime.UtcNow.AddMinutes(_jwtConfigurationOptions.AccessTokenExpiresTimeInMinutes),
             signingCredentials: new SigningCredentials(
                 GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
         );
 
-        return new ValueTask<string>(new JwtSecurityTokenHandler().WriteToken(jwt));
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    public ValueTask<string> GenerateRefreshToken(CancellationToken ct = default)
+    public RefreshTokenModel GenerateRefreshToken()
     {
         byte[] randomNumber = new byte[32];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
-        return new ValueTask<string>(Convert.ToBase64String(randomNumber));
+        return new RefreshTokenModel
+        {
+            Token = Convert.ToBase64String(randomNumber),
+            TokenExpiryTime = DateTime.UtcNow
+                .AddDays(_jwtConfigurationOptions.RefreshTokenExpiresTimeInDays)
+        };
     }
 
-    public ValueTask<ClaimsPrincipal> GetPrincipalFromExpiredTokenAsync(string token, CancellationToken ct = default)
+    public ClaimsPrincipal GetPrincipalFromExpiredTokenAsync(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = config.GetValue<string>("Issuer"),
+            ValidIssuer = _jwtConfigurationOptions.Issuer,
             ValidateAudience = true,
-            ValidAudience = config.GetValue<string>("Audience"),
+            ValidAudience = _jwtConfigurationOptions.Audience,
             ValidateLifetime = true,
             IssuerSigningKey = GetSymmetricSecurityKey(),
             ValidateIssuerSigningKey = true
@@ -63,11 +72,10 @@ public class TokenService(IConfiguration config) : ITokenService
             throw new CustomValidationException(new Error("InvalidToken", "Invalid access token"));
         }
         
-        return new ValueTask<ClaimsPrincipal>(principal);
+        return principal;
     }
 
     private SymmetricSecurityKey GetSymmetricSecurityKey()
         => new(
-            Encoding.UTF8.GetBytes(config.GetValue<string>("SymmetricSecurityKey")!
-            ));
+            Encoding.UTF8.GetBytes(_jwtConfigurationOptions.SymmetricSecurityKey));
 }

@@ -4,10 +4,10 @@ using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Results;
+using Domain.Services.Auth;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
-using Microsoft.Extensions.Configuration;
 
 namespace Domain.Handlers.Auth;
 
@@ -16,7 +16,7 @@ public class RefreshHandler(
     ITokenService tokenService,
     IUserService userService,
     AppDbContext context,
-    IConfiguration config)
+    IAuthService authService)
 {
     public async Task<RefreshResponse> Handle(RefreshRequest request, CancellationToken ct = default)
     {
@@ -26,8 +26,8 @@ public class RefreshHandler(
             throw new CustomValidationException(validationResult.Error);
         }
 
-        var principal = await tokenService
-            .GetPrincipalFromExpiredTokenAsync(request.ExpiredAccessToken, ct);
+        var principal = tokenService
+            .GetPrincipalFromExpiredTokenAsync(request.ExpiredAccessToken);
         string? username = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         NotFoundException.ThrowIfNull(username, "\"Username\" claim is required");
 
@@ -40,12 +40,8 @@ public class RefreshHandler(
             throw new CustomValidationException(AuthErrors.InvalidRefreshToken);
         }
 
-        string newAccessToken = await tokenService.GenerateAccessToken(user, ct);
-        string newRefreshToken = await tokenService.GenerateRefreshToken(ct);
-
-        user.CurrentRefreshToken = newRefreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow
-            .AddDays(config.GetValue<int>("RefreshTokenExpiresTime"));
+        string newAccessToken = tokenService.GenerateAccessToken(user);
+        string newRefreshToken = authService.GiveUserRefreshToken(user);
 
         await context.SaveChangesAsync(ct);
         return new RefreshResponse

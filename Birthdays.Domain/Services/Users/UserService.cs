@@ -23,7 +23,7 @@ public class UserService(IRepository<Profile> profileRepo) : IUserService
 
     public async Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
     {
-        var profile = await (await profileRepo.Select())
+        var profile = await profileRepo.Select()
             .Include(p => p.User)
             .Include(p => p.SubscriptionsAsSubscriber)
             .Include(p => p.SubscriptionsAsBirthdayMan)

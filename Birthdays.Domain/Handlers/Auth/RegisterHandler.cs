@@ -22,9 +22,7 @@ public class RegisterHandler(
     AppDbContext context,
     RegisterRequestValidator requestValidator,
     IMapper mapper,
-    ITokenService tokenService,
-    IConfiguration config
-)
+    ITokenService tokenService)
 {
     public async Task<RegisterResponse> Handle(
         RegisterRequest request, CancellationToken ct = default)
@@ -52,12 +50,8 @@ public class RegisterHandler(
             IdentityException.ThrowByError(registerResult.Error);
         }
 
-        string accessToken = await tokenService.GenerateAccessToken(user, ct);
-        string refreshToken = await tokenService.GenerateRefreshToken(ct);
-
-        user.CurrentRefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow
-            .AddDays(config.GetValue<int>("RefreshTokenExpiresTime"));
+        string accessToken = tokenService.GenerateAccessToken(user);
+        string refreshToken = authService.GiveUserRefreshToken(user);
         
         await context.SaveChangesAsync(ct);
 
