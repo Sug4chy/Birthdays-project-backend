@@ -10,7 +10,6 @@ using Domain.Services.Profiles;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Domain.Handlers.Auth;
