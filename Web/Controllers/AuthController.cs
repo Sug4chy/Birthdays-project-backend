@@ -2,6 +2,7 @@
 using Domain.DTO.Responses;
 using Domain.DTO.Responses.Auth;
 using Domain.Handlers.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Extensions;
@@ -26,7 +27,7 @@ public class AuthController : ControllerBase
         CancellationToken ct = default)
         => handler.Handle(request, ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("logout")]
     public Task<WrapperResponseDto<LogoutResponse>> Logout(
         [FromBody] LogoutRequest request,

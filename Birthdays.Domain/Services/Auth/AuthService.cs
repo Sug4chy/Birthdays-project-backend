@@ -1,5 +1,5 @@
-﻿using Data.Entities;
-using Data.Repositories;
+﻿using Data.Context;
+using Data.Entities;
 using Domain.Models;
 using Domain.Results;
 using Domain.Services.Tokens;
@@ -9,8 +9,8 @@ namespace Domain.Services.Auth;
 
 public class AuthService(
     UserManager<User> userManager, 
-    SignInManager<User> signInManager, 
-    IRepository<User> userRepo,
+    SignInManager<User> signInManager,
+    AppDbContext context,
     ITokenService tokenService) : IAuthService
 {
     public async Task<Result> RegisterUserAsync(RegisterModel model, CancellationToken ct = default)
@@ -37,15 +37,17 @@ public class AuthService(
     {
         user.CurrentRefreshToken = null;
         user.RefreshTokenExpiryTime = DateTime.MinValue;
-        await userRepo.CommitChangesAsync(ct);
+        await context.SaveChangesAsync(ct);
         return Result.Success();
     }
 
-    public string GiveUserRefreshToken(User user)
+    public async Task<AuthTokensModel> GenerateAndSetTokensAsync(User user, CancellationToken ct = default)
     {
         var refreshTokenModel = tokenService.GenerateRefreshToken();
         user.CurrentRefreshToken = refreshTokenModel.Token;
         user.RefreshTokenExpiryTime = refreshTokenModel.TokenExpiryTime;
-        return refreshTokenModel.Token;
+        string accessToken = tokenService.GenerateAccessToken(user);
+        await context.SaveChangesAsync(ct);
+        return new AuthTokensModel { AccessToken = accessToken, RefreshToken = refreshTokenModel.Token };
     }
 }

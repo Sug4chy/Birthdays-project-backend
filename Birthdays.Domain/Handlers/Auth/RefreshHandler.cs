@@ -39,15 +39,14 @@ public class RefreshHandler(
         {
             throw new CustomValidationException(AuthErrors.InvalidRefreshToken);
         }
-
-        string newAccessToken = tokenService.GenerateAccessToken(user);
-        string newRefreshToken = authService.GiveUserRefreshToken(user);
+        
+        var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
 
         await context.SaveChangesAsync(ct);
         return new RefreshResponse
         {
-            RefreshToken = newRefreshToken,
-            AccessToken = newAccessToken
+            RefreshToken = tokensModel.RefreshToken,
+            AccessToken = tokensModel.AccessToken
         };
     }
 }

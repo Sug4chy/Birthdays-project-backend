@@ -1,11 +1,11 @@
-﻿using Data.Entities;
-using Data.Repositories;
+﻿using Data.Context;
+using Data.Entities;
 using Domain.DTO.Requests.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services.Users;
 
-public class UserService(IRepository<Profile> profileRepo) : IUserService
+public class UserService(AppDbContext context) : IUserService
 {
     public Task<User> CreateUserAsync(RegisterRequest request, 
         Profile profile, CancellationToken ct = default)
@@ -23,7 +23,7 @@ public class UserService(IRepository<Profile> profileRepo) : IUserService
 
     public async Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
     {
-        var profile = await profileRepo.Select()
+        var profile = await context.Profiles
             .Include(p => p.User)
             .Include(p => p.SubscriptionsAsSubscriber)
             .Include(p => p.SubscriptionsAsBirthdayMan)

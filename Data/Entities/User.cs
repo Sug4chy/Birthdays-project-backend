@@ -12,7 +12,7 @@ public class User : IdentityUser, IAuditableEntity
     public string? Patronymic { get; set; }
     public required DateOnly BirthDate { get; set; }
     public string? CurrentRefreshToken { get; set; }
-    public DateTime RefreshTokenExpiryTime { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
     public DateTime CreatingTime { get; set; }
     public DateTime EditingTime { get; set; }
     public DateTime? DeletingTime { get; set; }

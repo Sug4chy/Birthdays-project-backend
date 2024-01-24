@@ -6,7 +6,6 @@ using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Models;
 using Domain.Services.Auth;
-using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
 using Serilog;
@@ -17,9 +16,7 @@ public class LoginHandler(
     LoginRequestValidator validator,
     IAuthService authService,
     IMapper mapper,
-    IUserService userService,
-    ITokenService tokenService,
-    AppDbContext context)
+    IUserService userService)
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken ct = default)
     {
@@ -41,17 +38,14 @@ public class LoginHandler(
 
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
         NotFoundException.ThrowIfNull(user, $"User with email {request.Email} wasn't found");
-
-        string accessToken = tokenService.GenerateAccessToken(user!);
-        string refreshToken = authService.GiveUserRefreshToken(user!);
         
-        await context.SaveChangesAsync(ct);
+        var tokensModel = await authService.GenerateAndSetTokensAsync(user!, ct);
         
         Log.Information($"Login response was successfully sent for user {request.Email}");
         return new LoginResponse
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            AccessToken = tokensModel.AccessToken,
+            RefreshToken = tokensModel.RefreshToken,
             User = mapper.Map<UserDto>(user)
         };
     }

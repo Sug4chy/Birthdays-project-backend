@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Data.Context;
 using Domain.DTO;
 using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
@@ -7,7 +6,6 @@ using Domain.Exceptions;
 using Domain.Models;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
-using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
 using Serilog;
@@ -18,10 +16,8 @@ public class RegisterHandler(
     IAuthService authService,
     IUserService userService,
     IProfileService profileService,
-    AppDbContext context,
     RegisterRequestValidator requestValidator,
-    IMapper mapper,
-    ITokenService tokenService)
+    IMapper mapper)
 {
     public async Task<RegisterResponse> Handle(
         RegisterRequest request, CancellationToken ct = default)
@@ -49,16 +45,13 @@ public class RegisterHandler(
             IdentityException.ThrowByError(registerResult.Error);
         }
 
-        string accessToken = tokenService.GenerateAccessToken(user);
-        string refreshToken = authService.GiveUserRefreshToken(user);
+        var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
         
-        await context.SaveChangesAsync(ct);
-
         Log.Information($"Register response was successfully sent for user {request.Email}");
         return new RegisterResponse
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            AccessToken = tokensModel.AccessToken,
+            RefreshToken = tokensModel.RefreshToken,
             User = mapper.Map<UserDto>(user)
         };
     }
