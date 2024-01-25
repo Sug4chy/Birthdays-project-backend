@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Data.Context;
 using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
@@ -15,7 +14,6 @@ public class RefreshHandler(
     RefreshRequestValidator validator,
     ITokenService tokenService,
     IUserService userService,
-    AppDbContext context,
     IAuthService authService)
 {
     public async Task<RefreshResponse> Handle(RefreshRequest request, CancellationToken ct = default)
@@ -41,8 +39,6 @@ public class RefreshHandler(
         }
         
         var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
-
-        await context.SaveChangesAsync(ct);
         return new RefreshResponse
         {
             RefreshToken = tokensModel.RefreshToken,
