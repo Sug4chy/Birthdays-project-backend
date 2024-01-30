@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+﻿using Domain.Results;
 using Microsoft.AspNetCore.Http;
 
 namespace Domain.Exceptions;

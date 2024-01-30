@@ -1,4 +1,4 @@
-﻿namespace Domain.Requests.Auth;
+﻿namespace Domain.DTO.Requests.Auth;
 
 public record RegisterRequest
 {

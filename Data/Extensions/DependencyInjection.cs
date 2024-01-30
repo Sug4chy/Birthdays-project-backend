@@ -1,5 +1,4 @@
 ﻿using Data.Context;
-using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +19,6 @@ public static class DependencyInjection
                 .AddInterceptors(updateAuditableInterceptor);
         });
 
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         return services;
     }
 }

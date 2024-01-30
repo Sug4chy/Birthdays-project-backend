@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using Data.Extensions;
+using Domain.Configs;
 using Domain.Extensions;
+using Domain.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -13,6 +15,9 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services.Configure<JwtConfigurationOptions>(
+            configuration.GetSection(JwtConfigurationOptions.Position));
+        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
@@ -40,6 +45,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         
         services.AddValidators();
         services.AddApplicationServices();
+        services.AddAutoMapper(typeof(AppMappingProfile));
         services.AddHandlers();
 
         Log.Logger = new LoggerConfiguration()

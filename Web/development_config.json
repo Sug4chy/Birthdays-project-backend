@@ -9,9 +9,12 @@
   "ConnectionStrings": {
     "DefaultConnection": "тут должна быть ваша строка подключения :)"
   },
-  "Issuer": "BirthdaysServer",
-  "Audience": "BirthdaysClient",
-  "SymmetricSecurityKey": "1234567890_secret_1234567890_another_secret_1234567890",
-  "Salt": "ILoveMyLittlePony!",
-  "TokenExpiresTime": 10
+  "JwtConfiguration": {
+    "Issuer": "BirthdaysServer",
+    "Audience": "BirthdaysClient",
+    "SymmetricSecurityKey": "1234567890_secret_1234567890_another_secret_1234567890",
+    "Salt": "ILoveMyLittlePony!",
+    "AccessTokenExpiresTimeInMinutes": 10,
+    "RefreshTokenExpiresTimeInDays": 21
+  }
 }

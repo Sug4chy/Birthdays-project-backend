@@ -164,6 +164,9 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreatingTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CurrentRefreshToken")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("DeletingTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -210,6 +213,9 @@ namespace Data.Migrations
 
                     b.Property<Guid>("ProfileId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

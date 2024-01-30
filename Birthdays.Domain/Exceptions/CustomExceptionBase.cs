@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Domain.Results;
 
 namespace Domain.Exceptions;
 
