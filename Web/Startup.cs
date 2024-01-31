@@ -41,6 +41,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 };
             });
 
+        services.AddCors();
+
         services.AddControllers();
         
         services.AddValidators();
@@ -63,6 +65,12 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        
+        app.UseCors(builder => 
+            builder 
+                //.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5174")
+                .AllowAnyOrigin()
+                .WithMethods("GET", "POST", "PUT", "DELETE"));
         
         app.UseRouting();
         app.UseMiddleware<ErrorHandlingMiddleware>();
