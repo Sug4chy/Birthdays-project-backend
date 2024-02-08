@@ -40,6 +40,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                     ValidateIssuerSigningKey = true
                 };
             });
+        services.AddAuthorization();
 
         services.AddCors();
 

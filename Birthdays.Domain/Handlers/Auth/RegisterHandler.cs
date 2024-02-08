@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Domain.DTO;
 using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
@@ -8,6 +7,7 @@ using Domain.Services.Auth;
 using Domain.Services.Profiles;
 using Domain.Services.Users;
 using Domain.Validators;
+using Domain.Validators.Auth;
 using Serilog;
 
 namespace Domain.Handlers.Auth;
@@ -16,8 +16,7 @@ public class RegisterHandler(
     IAuthService authService,
     IUserService userService,
     IProfileService profileService,
-    RegisterRequestValidator requestValidator,
-    IMapper mapper)
+    RegisterRequestValidator requestValidator)
 {
     public async Task<RegisterResponse> Handle(
         RegisterRequest request, CancellationToken ct = default)
@@ -51,8 +50,7 @@ public class RegisterHandler(
         return new RegisterResponse
         {
             AccessToken = tokensModel.AccessToken,
-            RefreshToken = tokensModel.RefreshToken,
-            User = mapper.Map<UserDto>(user)
+            RefreshToken = tokensModel.RefreshToken
         };
     }
 }

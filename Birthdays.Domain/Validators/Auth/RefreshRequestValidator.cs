@@ -2,7 +2,7 @@
 using Domain.Results;
 using FluentValidation;
 
-namespace Domain.Validators;
+namespace Domain.Validators.Auth;
 
 public class RefreshRequestValidator : AbstractValidator<RefreshRequest>
 {

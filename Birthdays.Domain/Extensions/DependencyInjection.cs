@@ -4,6 +4,7 @@ using Domain.Services.Profiles;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
+using Domain.Validators.Auth;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Domain.Extensions;

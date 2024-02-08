@@ -7,6 +7,7 @@ using Domain.Services.Auth;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators;
+using Domain.Validators.Auth;
 
 namespace Domain.Handlers.Auth;
 

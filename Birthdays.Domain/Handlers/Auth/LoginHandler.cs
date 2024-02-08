@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Data.Context;
-using Domain.DTO;
 using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
@@ -8,6 +6,7 @@ using Domain.Models;
 using Domain.Services.Auth;
 using Domain.Services.Users;
 using Domain.Validators;
+using Domain.Validators.Auth;
 using Serilog;
 
 namespace Domain.Handlers.Auth;
@@ -45,8 +44,7 @@ public class LoginHandler(
         return new LoginResponse
         {
             AccessToken = tokensModel.AccessToken,
-            RefreshToken = tokensModel.RefreshToken,
-            User = mapper.Map<UserDto>(user)
+            RefreshToken = tokensModel.RefreshToken
         };
     }
 }
