@@ -27,16 +27,17 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                var jwtConfiguration = configuration.GetSection(JwtConfigurationOptions.Position);
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = configuration.GetValue<string>("Issuer"),
+                    ValidIssuer = jwtConfiguration.GetValue<string>("Issuer"),
                     ValidateAudience = true,
-                    ValidAudience = configuration.GetValue<string>("Audience"),
+                    ValidAudience = jwtConfiguration.GetValue<string>("Audience"),
                     ValidateLifetime = true,
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                            configuration.GetValue<string>("SymmetricSecurityKey")!)),
+                            jwtConfiguration.GetValue<string>("SymmetricSecurityKey")!)),
                     ValidateIssuerSigningKey = true
                 };
             });

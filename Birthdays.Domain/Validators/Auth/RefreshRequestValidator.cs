@@ -15,10 +15,4 @@ public class RefreshRequestValidator : AbstractValidator<RefreshRequest>
             .NotNull()
             .NotEmpty();
     }
-    
-    public new async Task<Result> ValidateAsync(RefreshRequest request, CancellationToken ct = default)
-    {
-        var result = await base.ValidateAsync(request, ct);
-        return Result.FromValidationResult(result);
-    }
 }

@@ -8,5 +8,6 @@ public interface ITokenService
 {
     string GenerateAccessToken(User user);
     RefreshTokenModel GenerateRefreshToken();
-    ClaimsPrincipal GetPrincipalFromExpiredTokenAsync(string token);
+    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+    Claim[] GetClaimsFromJwt(string token);
 }

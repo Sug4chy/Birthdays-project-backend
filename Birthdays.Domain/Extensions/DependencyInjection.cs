@@ -1,10 +1,13 @@
-﻿using Domain.Handlers.Auth;
+﻿using Domain.DTO.Requests.Profiles;
+using Domain.Handlers.Auth;
+using Domain.Handlers.Profiles;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
-using Domain.Validators;
 using Domain.Validators.Auth;
+using Domain.Validators.Profiles;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Domain.Extensions;
@@ -18,6 +21,8 @@ public static class DependencyInjection
         services.AddScoped<LoginHandler>();
         services.AddScoped<LogoutHandler>();
         services.AddScoped<RefreshHandler>();
+
+        services.AddScoped<GetProfileByIdHandler>();
         return services;
     }
 
@@ -35,6 +40,8 @@ public static class DependencyInjection
         services.AddScoped<RegisterRequestValidator>();
         services.AddScoped<LoginRequestValidator>();
         services.AddScoped<RefreshRequestValidator>();
+
+        services.AddScoped<IValidator<GetProfileByIdRequest>, GetProfileByIdRequestValidator>();
         return services;
     }
 

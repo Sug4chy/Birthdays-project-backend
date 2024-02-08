@@ -20,10 +20,7 @@ public class LogoutHandler(IAuthService authService, IUserService userService)
         {
             Log.Error($"{logoutResult.Error.Description} error occurred while " +
                       $"logging out user with email {user!.Email}");
-            throw new IdentityException
-            {
-                Errors = new[] { logoutResult.Error }
-            };
+            UnauthorizedException.ThrowByError(logoutResult.Error);
         }
         
         Log.Information($"Logout response was successfully sent for user {request.Email}");

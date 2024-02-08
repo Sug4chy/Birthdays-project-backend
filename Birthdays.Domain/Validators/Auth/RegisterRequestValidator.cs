@@ -17,10 +17,4 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .WithErrorCode("NoDigitsValidator")
             .WithMessage("Password must include at least 1 digit");
     }
-    
-    public new async Task<Result> ValidateAsync(RegisterRequest request, CancellationToken ct = default)
-    {
-        var result = await base.ValidateAsync(request, ct);
-        return Result.FromValidationResult(result);
-    }
 }

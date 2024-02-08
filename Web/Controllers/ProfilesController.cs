@@ -14,12 +14,12 @@ namespace Web.Controllers;
 public class ProfilesController : ControllerBase
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpGet("{profileId:guid}")]
+    [HttpGet("{profileId}")]
     public Task<WrapperResponseDto<GetProfileByIdResponse>> GetProfileById(
-        Guid profileId,
-        GetProfileByIdRequest request,
-        GetProfileByIdHandler handler,
+        [FromRoute] Guid profileId,
+        [FromBody] GetProfileByIdRequest request,
+        [FromServices] GetProfileByIdHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request with { Jwt = HttpContext.GetJwtToken() }, 
+        => handler.Handle(request, 
             ct).WrappedWithLinks();
 }

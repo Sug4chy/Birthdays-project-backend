@@ -9,7 +9,6 @@ public class AppMappingProfile : MappingProfileBase
 {
     public AppMappingProfile()
     {
-        CreateMap<User, UserDto>();
         CreateMap<Profile, ProfileDto>();
         CreateMap<Subscription, SubscriptionDto>();
 

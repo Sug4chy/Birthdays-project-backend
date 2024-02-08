@@ -7,10 +7,9 @@ public class GetProfileByIdRequestValidator : AbstractValidator<GetProfileByIdRe
 {
     public GetProfileByIdRequestValidator()
     {
-        RuleFor(request => request.Jwt)
-            .NotNull()
-            .NotEmpty();
         RuleFor(request => request.ProfileId)
-            .NotEmpty();
+            .NotNull()
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
     }
 }
