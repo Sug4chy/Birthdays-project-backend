@@ -7,6 +7,7 @@ using Domain.Services.Auth;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators.Auth;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Auth;
 
@@ -14,10 +15,13 @@ public class RefreshHandler(
     RefreshRequestValidator validator,
     ITokenService tokenService,
     IUserService userService,
-    IAuthService authService)
+    IAuthService authService,
+    ILogger<RefreshHandler> logger)
 {
     public async Task<RefreshResponse> Handle(RefreshRequest request, CancellationToken ct = default)
     {
+        logger.LogInformation("Refresh request was received from user " +
+                              $"with refresh token {request.RefreshToken}");
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
 
@@ -37,8 +41,9 @@ public class RefreshHandler(
                 Error = AuthErrors.InvalidRefreshToken
             };
         }
-        
+
         var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
+        logger.LogInformation($"Refresh response was successfully sent to user with email {user.Email}");
         return new RefreshResponse
         {
             RefreshToken = tokensModel.RefreshToken,

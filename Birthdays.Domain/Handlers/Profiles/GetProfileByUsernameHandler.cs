@@ -8,6 +8,7 @@ using Domain.Services.Auth;
 using Domain.Services.Profiles;
 using Domain.Services.Users;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Profiles;
 
@@ -16,11 +17,13 @@ public class GetProfileByUsernameHandler(
     IUserService userService,
     IProfileService profileService,
     IAuthService authService,
-    IMapper mapper)
+    IMapper mapper,
+    ILogger<GetProfileByUsernameHandler> logger)
 {
     public async Task<GetProfileByUsernameResponse> Handle(GetProfileByUsernameRequest request,
         CancellationToken ct = default)
     {
+        logger.LogInformation($"GetProfileByUsername was received for {request.Username}'s profile");
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
         
@@ -36,6 +39,7 @@ public class GetProfileByUsernameHandler(
         var profile = await profileService.GetProfileWithUserByIdAsync(user!.ProfileId, ct);
         NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(user.ProfileId));
 
+        logger.LogInformation($"GetProfileByUsernameResponse was successfully sent to {currentUser.Email}");
         return new GetProfileByUsernameResponse
         {
             Name = user.Name,

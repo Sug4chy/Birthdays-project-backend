@@ -4,27 +4,28 @@ using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.Auth;
 using Domain.Services.Users;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Auth;
 
-public class LogoutHandler(IAuthService authService, IUserService userService)
+public class LogoutHandler(
+    IAuthService authService, 
+    IUserService userService,
+    ILogger<LogoutHandler> logger)
 {
     public async Task<LogoutResponse> Handle(LogoutRequest request, CancellationToken ct = default)
     {
-        Log.Information($"Logout request was received for user {request.Email}");
+        logger.LogInformation($"Logout request was received for user {request.Email}");
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
         NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(request.Email));
         
         var logoutResult = await authService.LogoutUserAsync(user!, ct);
         if (!logoutResult.IsSuccess)
         {
-            Log.Error($"{logoutResult.Error.Description} error occurred while " +
-                      $"logging out user with email {user!.Email}");
             UnauthorizedException.ThrowByError(logoutResult.Error);
         }
         
-        Log.Information($"Logout response was successfully sent for user {request.Email}");
+        logger.LogInformation($"Logout response was successfully sent for user {request.Email}");
         return new LogoutResponse();
     }
 }

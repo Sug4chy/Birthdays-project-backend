@@ -8,7 +8,6 @@ using Domain.Services.Auth;
 using Domain.Services.Users;
 using Domain.Validators.Auth;
 using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace Domain.Handlers.Auth;
 
@@ -37,7 +36,7 @@ public class LoginHandler(
 
         var tokensModel = await authService.GenerateAndSetTokensAsync(user!, ct);
 
-        Log.Information($"Login response was successfully sent for user {request.Email}");
+        logger.LogInformation($"Login response was successfully sent for user {request.Email}");
         return new LoginResponse
         {
             AccessToken = tokensModel.AccessToken,
