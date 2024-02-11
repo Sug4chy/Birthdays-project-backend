@@ -14,7 +14,7 @@ public class BadRequestException : ExceptionBase
         {
             throw new BadRequestException
             {
-                Errors = [new Error(result.Errors[0].ErrorCode, result.Errors[0].ErrorMessage)]
+                Error = Error.FromValidationFailure(result.Errors[0])
             };
         }
     }

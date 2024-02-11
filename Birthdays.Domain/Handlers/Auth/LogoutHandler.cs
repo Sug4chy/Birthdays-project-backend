@@ -1,6 +1,7 @@
 ﻿using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
+using Domain.Results;
 using Domain.Services.Auth;
 using Domain.Services.Users;
 using Serilog;
@@ -13,7 +14,7 @@ public class LogoutHandler(IAuthService authService, IUserService userService)
     {
         Log.Information($"Logout request was received for user {request.Email}");
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
-        NotFoundException.ThrowIfNull(user, $"User with email {request.Email} wasn't found");
+        NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(request.Email));
         
         var logoutResult = await authService.LogoutUserAsync(user!, ct);
         if (!logoutResult.IsSuccess)

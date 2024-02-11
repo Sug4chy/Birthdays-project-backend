@@ -10,4 +10,5 @@ public interface IAuthService
     Task<Result> LoginUserAsync(LoginModel model, CancellationToken ct = default);
     Task<Result> LogoutUserAsync(User user, CancellationToken ct = default);
     Task<AuthTokensModel> GenerateAndSetTokensAsync(User user, CancellationToken ct = default);
+    Task<User?> GetCurrentUserFromAccessTokenAsync(string jwt, CancellationToken ct = default);
 }

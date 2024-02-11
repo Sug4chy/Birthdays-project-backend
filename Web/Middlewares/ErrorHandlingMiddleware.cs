@@ -24,7 +24,7 @@ public class ErrorHandlingMiddleware(
             {
                 case ExceptionBase customExceptionBase:
                     context.Response.StatusCode = customExceptionBase.StatusCode;
-                    errorModel = new ServerErrorModel(customExceptionBase.Errors[0]);
+                    errorModel = new ServerErrorModel(customExceptionBase.Error);
                     logger.LogError($"{errorModel.Error.Code}:{errorModel.Error.Description}");
                     newContent = JsonSerializer.Serialize(errorModel);
                     break;

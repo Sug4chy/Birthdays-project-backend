@@ -15,6 +15,9 @@ public class ProfileService(AppDbContext context) : IProfileService
 
     public Task<Profile?> GetProfileWithUserByIdAsync(Guid profileId, CancellationToken ct = default)
         => context.Profiles
-            .Include(p => p.User)
+            .Include(p => p.SubscriptionsAsSubscriber)
+            .Include(p => p.SubscriptionsAsBirthdayMan)
+            .Include(p => p.WishLists)!
+            .ThenInclude(wl => wl.Wishes)
             .FirstOrDefaultAsync(p => p.Id == profileId, ct);
 }

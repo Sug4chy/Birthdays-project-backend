@@ -3,6 +3,7 @@ using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Models;
+using Domain.Results;
 using Domain.Services.Auth;
 using Domain.Services.Users;
 using Domain.Validators.Auth;
@@ -32,7 +33,7 @@ public class LoginHandler(
         }
 
         var user = await userService.GetUserByEmailAsync(request.Email, ct);
-        NotFoundException.ThrowIfNull(user, $"User with email {request.Email} wasn't found");
+        NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(request.Email));
 
         var tokensModel = await authService.GenerateAndSetTokensAsync(user!, ct);
 

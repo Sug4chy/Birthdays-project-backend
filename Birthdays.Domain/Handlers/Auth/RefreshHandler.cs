@@ -24,17 +24,17 @@ public class RefreshHandler(
         var principal = tokenService
             .GetPrincipalFromExpiredToken(request.ExpiredAccessToken);
         string? username = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-        NotFoundException.ThrowIfNull(username, "\"Username\" claim is required");
+        NotFoundException.ThrowIfNull(username, AuthErrors.DoesNotIncludeClaim(ClaimTypes.Email));
 
         var user = await userService.GetUserByEmailAsync(username!, ct);
-        NotFoundException.ThrowIfNull(user, $"User with email {username} wasn't found");
+        NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(username!));
 
         if (user!.CurrentRefreshToken != request.RefreshToken
             || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             throw new ForbiddenException
             {
-                Errors = [AuthErrors.InvalidRefreshToken]
+                Error = AuthErrors.InvalidRefreshToken
             };
         }
         

@@ -1,9 +1,11 @@
-﻿using Data.Context;
+﻿using System.Security.Claims;
+using Data.Context;
 using Data.Entities;
 using Domain.Models;
 using Domain.Results;
 using Domain.Services.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services.Auth;
 
@@ -49,5 +51,18 @@ public class AuthService(
         string accessToken = tokenService.GenerateAccessToken(user);
         await context.SaveChangesAsync(ct);
         return new AuthTokensModel { AccessToken = accessToken, RefreshToken = refreshTokenModel.Token };
+    }
+
+    public async Task<User?> GetCurrentUserFromAccessTokenAsync(string jwt, CancellationToken ct = default)
+    {
+        var tokenClaims = tokenService.GetClaimsFromJwt(jwt);
+        var usernameClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+        if (usernameClaim is null)
+        {
+            return null;
+        }
+
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == usernameClaim.Value, ct);
+        return user;
     }
 }

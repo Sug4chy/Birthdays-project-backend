@@ -11,7 +11,7 @@ public class UnauthorizedException : ExceptionBase
     {
         throw new UnauthorizedException
         {
-            Errors = [error]
+            Error = error
         };
     }
 }
