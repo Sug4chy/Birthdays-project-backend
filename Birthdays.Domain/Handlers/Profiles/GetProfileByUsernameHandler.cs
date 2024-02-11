@@ -6,18 +6,20 @@ using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
+using Domain.Services.Subscriptions;
 using Domain.Services.Users;
-using FluentValidation;
+using Domain.Validators.Profiles;
 using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Profiles;
 
 public class GetProfileByUsernameHandler(
-    IValidator<GetProfileByUsernameRequest> validator,
+    GetProfileByUsernameRequestValidator validator,
     IUserService userService,
     IProfileService profileService,
     IAuthService authService,
     IMapper mapper,
+    ISubscriptionsService subscriptionsService,
     ILogger<GetProfileByUsernameHandler> logger)
 {
     public async Task<GetProfileByUsernameResponse> Handle(GetProfileByUsernameRequest request,
@@ -36,7 +38,7 @@ public class GetProfileByUsernameHandler(
         var user = await userService.GetUserByEmailAsync(request.Username, ct);
         NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(request.Username));
 
-        var profile = await profileService.GetProfileWithUserByIdAsync(user!.ProfileId, ct);
+        var profile = await profileService.GetProfileByIdAsync(user!.ProfileId, ct);
         NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(user.ProfileId));
 
         logger.LogInformation($"GetProfileByUsernameResponse was successfully sent to {currentUser.Email}");
@@ -47,8 +49,8 @@ public class GetProfileByUsernameHandler(
             Patronymic = user.Patronymic ?? "",
             Birthdate = user.BirthDate,
             Profile = mapper.Map<ProfileDto>(profile),
-            IsCurrentUserSubscribedTo = profile!.SubscriptionsAsBirthdayMan!
-                .FirstOrDefault(s => s.SubscriberId == currentUser.ProfileId) is not null
+            IsCurrentUserSubscribedTo = await subscriptionsService
+                .IsSubscribedToAsync(currentUser.ProfileId, profile!.Id, ct)
         };
     }
 }

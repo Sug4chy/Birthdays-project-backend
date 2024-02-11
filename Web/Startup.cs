@@ -27,7 +27,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
                 new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
-                    Description = "Please, insert your access token in format \"Bearer: token\"",
+                    Description = "Please, insert your access token",
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",

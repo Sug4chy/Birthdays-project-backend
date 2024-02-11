@@ -3,6 +3,7 @@ using Domain.Handlers.Auth;
 using Domain.Handlers.Profiles;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
+using Domain.Services.Subscriptions;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Validators.Auth;
@@ -32,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IProfileService, ProfileService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ISubscriptionsService, SubscriptionsService>();
         return services;
     }
 
@@ -41,7 +43,7 @@ public static class DependencyInjection
         services.AddScoped<LoginRequestValidator>();
         services.AddScoped<RefreshRequestValidator>();
 
-        services.AddScoped<IValidator<GetProfileByUsernameRequest>, GetProfileByUsernameRequestValidator>();
+        services.AddScoped<GetProfileByUsernameRequestValidator>();
         return services;
     }
 
