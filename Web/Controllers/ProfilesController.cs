@@ -22,7 +22,18 @@ public class ProfilesController : ControllerBase
         => handler.Handle(new GetProfileByUsernameRequest
             {
                 Username = username,
-                Jwt = HttpContext.GetJwtToken() ?? ""
-            }, 
+                Jwt = HttpContext.GetJwtToken()
+            },
+            ct).WrappedWithLinks();
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet("current")]
+    public Task<WrapperResponseDto<GetCurrentProfileResponse>> GetCurrentProfile(
+        [FromServices] GetCurrentProfileHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(new GetCurrentProfileRequest
+            {
+                Jwt = HttpContext.GetJwtToken()
+            },
             ct).WrappedWithLinks();
 }
