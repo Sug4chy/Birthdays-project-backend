@@ -85,6 +85,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             .CreateLogger();
         
         services.AddSingleton<ErrorHandlingMiddleware>();
+        services.AddHttpContextAccessor();
     }
 
     public void Configure(IApplicationBuilder app)

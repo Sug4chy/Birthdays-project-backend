@@ -23,7 +23,8 @@ public class TokenService(IOptions<JwtConfigurationOptions> options) : ITokenSer
         {
             new(ClaimTypes.Name, user.Name),
             new(ClaimTypes.Surname, user.Surname),
-            new(ClaimTypes.Email, user.Email!)
+            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.NameIdentifier, user.Id)
         };
         
         var jwt = new JwtSecurityToken(

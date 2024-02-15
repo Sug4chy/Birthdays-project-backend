@@ -13,7 +13,7 @@ public class ProfileService(AppDbContext context) : IProfileService
         return newProfile;
     }
 
-    public Task<Profile?> GetProfileByIdAsync(Guid profileId,
+    public Task<Profile?> GetProfileWithWishesByIdAsync(Guid profileId,
         CancellationToken ct = default)
         => context.Profiles
             .Include(p => p.WishLists)!

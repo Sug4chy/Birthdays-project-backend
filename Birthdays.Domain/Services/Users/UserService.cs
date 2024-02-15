@@ -24,4 +24,8 @@ public class UserService(AppDbContext context) : IUserService
     public Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
         => context.Users
             .FirstOrDefaultAsync(u => u.Email == email, ct);
+
+    public Task<User?> GetUserByIdAsync(string id, CancellationToken ct = default)
+        => context.Users
+            .FirstOrDefaultAsync(u => u.Id == id, ct);
 }

@@ -1,35 +1,42 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Domain.DTO;
-using Domain.DTO.Requests.Profiles;
 using Domain.DTO.Responses.Profiles;
 using Domain.Exceptions;
 using Domain.Results;
-using Domain.Services.Auth;
 using Domain.Services.Profiles;
-using Domain.Validators.Profiles;
+using Domain.Services.Users;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Profiles;
 
 public class GetCurrentProfileHandler(
-    GetCurrentProfileRequestValidator validator,
-    IAuthService authService,
+    IUserService userService,
     IProfileService profileService,
-    IMapper mapper)
+    IMapper mapper,
+    IHttpContextAccessor accessor,
+    ILogger<GetCurrentProfileHandler> logger)
 {
-    public async Task<GetCurrentProfileResponse> Handle(GetCurrentProfileRequest request,
-        CancellationToken ct = default)
-    {
-        var validationResult = await validator.ValidateAsync(request, ct);
-        BadRequestException.ThrowByValidationResult(validationResult);
+    private readonly HttpContext _context = accessor.HttpContext!;
 
-        var currentUser = await authService.GetCurrentUserFromAccessTokenAsync(request.Jwt, ct)
+    public async Task<GetCurrentProfileResponse> Handle(CancellationToken ct = default)
+    {
+        string userId = _context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+            throw new UnauthorizedException
+            {
+                Error = AuthErrors.DoesNotIncludeClaim(ClaimTypes.NameIdentifier)
+            };
+        logger.LogInformation($"GetCurrentProfile request was received from user with id {userId}");
+        var currentUser = await userService.GetUserByIdAsync(userId, ct)
                           ?? throw new UnauthorizedException
                           {
                               Error = AuthErrors.InvalidAccessToken
                           };
-        var profile = await profileService.GetProfileByIdAsync(currentUser.ProfileId, ct);
+        var profile = await profileService.GetProfileWithWishesByIdAsync(currentUser.ProfileId, ct);
         NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(currentUser.ProfileId));
 
+        logger.LogInformation($"GetCurrentProfile response was successfully sent to user with id {userId}");
         return new GetCurrentProfileResponse
         {
             Name = currentUser.Name,

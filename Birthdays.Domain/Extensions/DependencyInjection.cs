@@ -21,7 +21,7 @@ public static class DependencyInjection
         services.AddScoped<LogoutHandler>();
         services.AddScoped<RefreshHandler>();
 
-        services.AddScoped<GetProfileByUsernameHandler>();
+        services.AddScoped<GetProfileByIdHandler>();
         services.AddScoped<GetCurrentProfileHandler>();
         return services;
     }
@@ -42,8 +42,7 @@ public static class DependencyInjection
         services.AddScoped<LoginRequestValidator>();
         services.AddScoped<RefreshRequestValidator>();
 
-        services.AddScoped<GetProfileByUsernameRequestValidator>();
-        services.AddScoped<GetCurrentProfileRequestValidator>();
+        services.AddScoped<GetProfileByIdRequestValidator>();
         return services;
     }
 
