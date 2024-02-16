@@ -19,4 +19,7 @@ public class ProfileService(AppDbContext context) : IProfileService
             .Include(p => p.WishLists)!
             .ThenInclude(wl => wl.Wishes)
             .FirstOrDefaultAsync(p => p.Id == profileId, ct);
+
+    public Task<Profile?> GetProfileByIdAsync(Guid profileId, CancellationToken ct = default)
+        => context.Profiles.FirstOrDefaultAsync(p => p.Id == profileId, ct);
 }
