@@ -18,7 +18,7 @@ public class UserService(AppDbContext context) : IUserService
             Patronymic = request.Patronymic,
             UserName = request.Email,
             Email = request.Email,
-            BirthDate = request.BirthDate
+            BirthDate = new DateOnly(request.BirthDate.Year, request.BirthDate.Month, request.BirthDate.Day)
         });
 
     public Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
