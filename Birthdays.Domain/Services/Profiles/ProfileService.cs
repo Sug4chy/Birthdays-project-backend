@@ -22,4 +22,7 @@ public class ProfileService(AppDbContext context) : IProfileService
 
     public Task<Profile?> GetProfileByIdAsync(Guid profileId, CancellationToken ct = default)
         => context.Profiles.FirstOrDefaultAsync(p => p.Id == profileId, ct);
+
+    public Task<bool> CheckIfUserExistsAsync(Guid profileId, CancellationToken ct = default)
+        => context.Profiles.AnyAsync(p => p.Id == profileId, ct);
 }

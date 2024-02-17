@@ -31,4 +31,16 @@ public class ProfilesController : ControllerBase
         [FromServices] GetCurrentProfileHandler handler,
         CancellationToken ct = default)
         => handler.Handle(ct).WrappedWithLinks();
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("{profileId}/subscribe")]
+    public Task<WrapperResponseDto<SubscribeToResponse>> SubscribeTo(
+        [FromRoute] Guid profileId,
+        [FromServices] SubscribeToHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(new SubscribeToRequest
+            {
+                BirthdayManId = profileId
+            },
+            ct).WrappedWithLinks();
 }
