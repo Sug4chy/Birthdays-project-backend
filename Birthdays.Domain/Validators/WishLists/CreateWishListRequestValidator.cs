@@ -7,8 +7,10 @@ public class CreateWishListRequestValidator : AbstractValidator<CreateWishListRe
 {
     public CreateWishListRequestValidator()
     {
-        RuleFor(request => request.Name)
+        RuleFor(request => request.WishList.Name)
             .NotNull()
             .NotEmpty();
+        RuleFor(request => request.WishList.Wishes)
+            .NotNull();
     }
 }

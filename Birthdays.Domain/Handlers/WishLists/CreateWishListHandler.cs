@@ -42,7 +42,7 @@ public class CreateWishListHandler(
         var profile = await profileService.GetProfileByIdAsync(currentUser.ProfileId, ct);
         NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(currentUser.ProfileId));
 
-        await wishListService.CreateWishListAsync(profile!, request.Name, request.Description, ct);
+        await wishListService.CreateWishListAsync(request.WishList, profile!, ct);
         logger.LogInformation($"CreateWishList response was successfully sent to {currentUser.Email} user");
         return new CreateWishListResponse();
     }

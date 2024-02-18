@@ -9,6 +9,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : Ident
     public DbSet<Profile> Profiles => Set<Profile>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<WishList> WishLists => Set<WishList>();
+    public DbSet<Wish> Wishes => Set<Wish>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
