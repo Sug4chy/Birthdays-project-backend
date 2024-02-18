@@ -1,7 +1,9 @@
-﻿using Data.Extensions;
+﻿using Data.Context;
+using Data.Extensions;
 using Domain.Configs;
 using Domain.Extensions;
 using Domain.Mapping;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Web.Extensions;
 using Web.Middlewares;
@@ -44,6 +46,16 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
 
     public void Configure(IApplicationBuilder app)
     {
+        using (var scope = app.ApplicationServices.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<AppDbContext>();
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
+        }
+        
         if (environment.IsDevelopment())
         {
             app.UseSwagger();
