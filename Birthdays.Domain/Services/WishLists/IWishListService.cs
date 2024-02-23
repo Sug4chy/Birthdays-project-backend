@@ -7,4 +7,6 @@ public interface IWishListService
 {
     Task CreateWishListAsync(WishListDto dto, Profile birthdayMan,
         CancellationToken ct = default);
+
+    Task<List<WishList>> GetWishListsByProfileIdAsync(Guid profileId, CancellationToken ct = default);
 }

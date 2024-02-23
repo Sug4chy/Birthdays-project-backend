@@ -1,4 +1,5 @@
-﻿using Domain.Handlers.Auth;
+﻿using Domain.Accessors;
+using Domain.Handlers.Auth;
 using Domain.Handlers.Profiles;
 using Domain.Handlers.WishLists;
 using Domain.Services.Auth;
@@ -28,6 +29,9 @@ public static class DependencyInjection
         services.AddScoped<GetCurrentProfileHandler>();
 
         services.AddScoped<CreateWishListHandler>();
+        services.AddScoped<GetCurrentProfileWishListsHandler>();
+        services.AddScoped<GetProfileWishListsByIdHandler>();
+        
         services.AddScoped<SubscribeToHandler>();
         return services;
     }
@@ -52,8 +56,12 @@ public static class DependencyInjection
         services.AddScoped<GetProfileByIdRequestValidator>();
 
         services.AddScoped<CreateWishListRequestValidator>();
+        services.AddScoped<GetProfileWishListsByIdRequestValidator>();
+        
         services.AddScoped<SubscribeToRequestValidator>();
         return services;
     }
 
+    public static IServiceCollection AddCurrentUserAccessor(this IServiceCollection services)
+        => services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
 }

@@ -1,40 +1,27 @@
-﻿using System.Security.Claims;
+﻿using Domain.Accessors;
 using Domain.DTO.Requests.WishLists;
 using Domain.DTO.Responses.WishLists;
 using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.Profiles;
-using Domain.Services.Users;
 using Domain.Services.WishLists;
 using Domain.Validators.WishLists;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.WishLists;
 
 public class CreateWishListHandler(
-    IUserService userService,
+    ICurrentUserAccessor userAccessor,
     CreateWishListRequestValidator validator,
     IProfileService profileService,
     IWishListService wishListService,
-    IHttpContextAccessor accessor,
     ILogger<CreateWishListHandler> logger)
 {
-    private readonly HttpContext _context = accessor.HttpContext!;
-
     public async Task<CreateWishListResponse> Handle(CreateWishListRequest request,
         CancellationToken ct = default)
     {
-        string userId = _context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                        ?? throw new UnauthorizedException
-                        {
-                            Error = AuthErrors.DoesNotIncludeClaim(ClaimTypes.NameIdentifier)
-                        };
-        var currentUser = await userService.GetUserByIdAsync(userId, ct)
-                          ?? throw new UnauthorizedException
-                          {
-                              Error = UsersErrors.NoSuchUserWithId(userId)
-                          };
+        var currentUser = await userAccessor.GetCurrentUserAsync(ct);
+        
         logger.LogInformation($"CreateWishList request was received from {currentUser.Email} user");
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);

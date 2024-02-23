@@ -1,41 +1,28 @@
-﻿using System.Security.Claims;
+﻿using Domain.Accessors;
 using Domain.DTO.Requests.Profiles;
 using Domain.DTO.Responses.Profiles;
 using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.Profiles;
 using Domain.Services.Subscriptions;
-using Domain.Services.Users;
 using Domain.Validators.Profiles;
-using Microsoft.AspNetCore.Http;
 
 namespace Domain.Handlers.Profiles;
 
 public class SubscribeToHandler(
-    IHttpContextAccessor accessor,
-    IUserService userService,
+    ICurrentUserAccessor userAccessor,
     SubscribeToRequestValidator validator,
     IProfileService profileService,
     ISubscriptionsService subscriptionsService)
 {
-    private readonly HttpContext _context = accessor.HttpContext!;
-
     public async Task<SubscribeToResponse> Handle(SubscribeToRequest request, CancellationToken ct = default)
     {
-        string userId = _context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                        ?? throw new UnauthorizedException
-                        {
-                            Error = AuthErrors.DoesNotIncludeClaim(ClaimTypes.NameIdentifier)
-                        };
-        var currentUser = await userService.GetUserByIdAsync(userId, ct)
-                          ?? throw new UnauthorizedException
-                          {
-                              Error = UsersErrors.NoSuchUserWithId(userId)
-                          };
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
+
+        var currentUser = await userAccessor.GetCurrentUserAsync(ct);
         
-        if (!await profileService.CheckIfUserExistsAsync(currentUser.ProfileId, ct))
+        if (!await profileService.CheckIfProfileExistsAsync(currentUser.ProfileId, ct))
         {
             throw new NotFoundException
             {
@@ -43,7 +30,7 @@ public class SubscribeToHandler(
             };
         }
 
-        if (!await profileService.CheckIfUserExistsAsync(request.BirthdayManId, ct))
+        if (!await profileService.CheckIfProfileExistsAsync(request.BirthdayManId, ct))
         {
             throw new NotFoundException
             {

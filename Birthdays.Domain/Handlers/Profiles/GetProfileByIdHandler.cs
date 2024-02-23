@@ -1,5 +1,5 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
+using Domain.Accessors;
 using Domain.DTO;
 using Domain.DTO.Requests.Profiles;
 using Domain.DTO.Responses.Profiles;
@@ -9,7 +9,6 @@ using Domain.Services.Profiles;
 using Domain.Services.Subscriptions;
 using Domain.Services.Users;
 using Domain.Validators.Profiles;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Profiles;
@@ -20,10 +19,9 @@ public class GetProfileByIdHandler(
     IProfileService profileService,
     IMapper mapper,
     ISubscriptionsService subscriptionsService,
-    IHttpContextAccessor accessor,
+    ICurrentUserAccessor userAccessor,
     ILogger<GetProfileByIdHandler> logger)
 {
-    private readonly HttpContext _context = accessor.HttpContext!;
 
     public async Task<GetProfileByIdResponse> Handle(GetProfileByIdRequest request,
         CancellationToken ct = default)
@@ -32,22 +30,12 @@ public class GetProfileByIdHandler(
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
 
-        string userId = _context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                        ?? throw new UnauthorizedException
-                        {
-                            Error = AuthErrors.DoesNotIncludeClaim(ClaimTypes.NameIdentifier)
-                        };
-
-        var currentUser = await userService.GetUserByIdAsync(userId, ct) ??
-                          throw new UnauthorizedException
-                          {
-                              Error = UsersErrors.NoSuchUserWithId(userId)
-                          };
-
+        var currentUser = await userAccessor.GetCurrentUserAsync(ct);
+        
         var user = await userService.GetUserByIdAsync(request.UserId.ToString(), ct);
         NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithId(request.UserId.ToString()));
 
-        var profile = await profileService.GetProfileWithWishesByIdAsync(user!.ProfileId, ct);
+        var profile = await profileService.GetProfileByIdAsync(user!.ProfileId, ct);
         NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(user.ProfileId));
 
         logger.LogInformation($"GetProfileByUsernameResponse was successfully sent to {currentUser.Email}");
@@ -56,7 +44,12 @@ public class GetProfileByIdHandler(
             Name = user.Name,
             Surname = user.Surname,
             Patronymic = user.Patronymic ?? "",
-            Birthdate = user.BirthDate,
+            Birthdate = new DateDto
+            {
+                Day = currentUser.BirthDate.Day,
+                Month = currentUser.BirthDate.Month,
+                Year = currentUser.BirthDate.Year
+            },
             Profile = mapper.Map<ProfileDto>(profile),
             IsCurrentUserSubscribedTo = await subscriptionsService
                 .IsSubscribedToAsync(currentUser.ProfileId, profile!.Id, ct)

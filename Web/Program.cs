@@ -2,9 +2,9 @@ namespace Web;
 
 internal static class Program
 {
-    public static void Main()
+    public static async Task Main()
     {
-        Host.CreateDefaultBuilder()
+        await Host.CreateDefaultBuilder()
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>()
@@ -13,6 +13,6 @@ internal static class Program
                         .Build());
             })
             .Build()
-            .Run();
+            .InitAndRunAsync();
     }
 }

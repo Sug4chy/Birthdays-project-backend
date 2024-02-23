@@ -1,11 +1,10 @@
-﻿using Data.Context;
-using Data.Extensions;
+﻿using Data.Extensions;
 using Domain.Configs;
 using Domain.Extensions;
 using Domain.Mapping;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Web.Extensions;
+using Web.Initializers;
 using Web.Middlewares;
 
 namespace Web;
@@ -41,21 +40,15 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             .CreateLogger();
 
         services.AddSingleton<ErrorHandlingMiddleware>();
+        
         services.AddHttpContextAccessor();
+        services.AddCurrentUserAccessor();
+
+        services.AddAsyncInitializer<MigrationAsyncInitializer>();
     }
 
     public void Configure(IApplicationBuilder app)
     {
-        using (var scope = app.ApplicationServices.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<AppDbContext>();
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
-        }
-        
         if (environment.IsDevelopment())
         {
             app.UseSwagger();
