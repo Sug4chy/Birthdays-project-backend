@@ -27,12 +27,13 @@ public static class DependencyInjection
 
         services.AddScoped<GetProfileByIdHandler>();
         services.AddScoped<GetCurrentProfileHandler>();
+        services.AddScoped<SubscribeToHandler>();
+        services.AddScoped<UnsubscribeFromHandler>();
 
         services.AddScoped<CreateWishListHandler>();
         services.AddScoped<GetCurrentProfileWishListsHandler>();
         services.AddScoped<GetProfileWishListsByIdHandler>();
         
-        services.AddScoped<SubscribeToHandler>();
         return services;
     }
 
@@ -54,11 +55,11 @@ public static class DependencyInjection
         services.AddScoped<RefreshRequestValidator>();
 
         services.AddScoped<GetProfileByIdRequestValidator>();
+        services.AddScoped<SubscribeToRequestValidator>();
+        services.AddScoped<UnsubscribeFromRequestValidator>();
 
         services.AddScoped<CreateWishListRequestValidator>();
         services.AddScoped<GetProfileWishListsByIdRequestValidator>();
-        
-        services.AddScoped<SubscribeToRequestValidator>();
         return services;
     }
 

@@ -43,4 +43,16 @@ public class ProfilesController : ControllerBase
                 BirthdayManId = profileId
             },
             ct).WrappedWithLinks();
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("{profileId}/unsubscribe")]
+    public Task<WrapperResponseDto<UnsubscribeFromResponse>> UnsubscribeFrom(
+        [FromRoute] Guid profileId,
+        [FromServices] UnsubscribeFromHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(new UnsubscribeFromRequest
+            {
+                BirthdayManId = profileId
+            },
+            ct).WrappedWithLinks();
 }
