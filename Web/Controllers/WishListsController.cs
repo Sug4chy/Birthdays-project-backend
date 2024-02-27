@@ -36,4 +36,14 @@ public class WishListsController : ControllerBase
         CancellationToken ct = default)
         => handler.Handle(new GetProfileWishListsByIdRequest { UserId = userId }, ct)
             .WrappedWithLinks();
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("current/[controller]/{wishListId}")]
+    public Task<WrapperResponseDto<CreateWishResponse>> CreateWish(
+        [FromRoute] Guid wishListId,
+        [FromBody] CreateWishRequest request,
+        [FromServices] CreateWishHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(request with { WishListId = wishListId }, ct)
+            .WrappedWithLinks();
 }

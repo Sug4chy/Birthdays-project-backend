@@ -39,4 +39,23 @@ public class WishListService(AppDbContext context) : IWishListService
             .Where(wl => wl.BirthdayManId == profileId)
             .Include(wl => wl.Wishes)
             .ToListAsync(ct);
+
+    public Task<WishList?> GetWishListByIdAsync(Guid wishListId, CancellationToken ct = default)
+        => context.WishLists
+            .Include(wl => wl.Wishes)
+            .FirstOrDefaultAsync(wl => wl.Id == wishListId, ct);
+
+    public async Task CreateWishAsync(WishDto wishDto, WishList wishList, CancellationToken ct = default)
+    {
+        var wish = new Wish
+        {
+            Description = wishDto.Description,
+            GiftRef = wishDto.GiftRef,
+            Name = wishDto.Name,
+            WishList = wishList,
+            WishListId = wishList.Id
+        };
+        wishList.Wishes!.Add(wish);
+        await context.SaveChangesAsync(ct);
+    }
 }

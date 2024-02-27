@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<CreateWishListHandler>();
         services.AddScoped<GetCurrentProfileWishListsHandler>();
         services.AddScoped<GetProfileWishListsByIdHandler>();
+        services.AddScoped<CreateWishHandler>();
         
         return services;
     }
@@ -60,6 +61,7 @@ public static class DependencyInjection
 
         services.AddScoped<CreateWishListRequestValidator>();
         services.AddScoped<GetProfileWishListsByIdRequestValidator>();
+        services.AddScoped<CreateWishRequestValidator>();
         return services;
     }
 
