@@ -20,20 +20,25 @@ public static class DependencyInjection
     
     public static IServiceCollection AddHandlers(this IServiceCollection services)
     {
+        //Auth handlers
         services.AddScoped<RegisterHandler>();
         services.AddScoped<LoginHandler>();
         services.AddScoped<LogoutHandler>();
         services.AddScoped<RefreshHandler>();
 
+        //Profile handlers
         services.AddScoped<GetProfileByIdHandler>();
         services.AddScoped<GetCurrentProfileHandler>();
         services.AddScoped<SubscribeToHandler>();
         services.AddScoped<UnsubscribeFromHandler>();
 
+        //WishList handlers
         services.AddScoped<CreateWishListHandler>();
         services.AddScoped<GetCurrentProfileWishListsHandler>();
         services.AddScoped<GetProfileWishListsByIdHandler>();
         services.AddScoped<CreateWishHandler>();
+        services.AddScoped<UpdateWishListHandler>();
+        services.AddScoped<DeleteWishListHandler>();
         
         return services;
     }
@@ -51,17 +56,22 @@ public static class DependencyInjection
 
     public static IServiceCollection AddValidators(this IServiceCollection services)
     {
+        //Auth validators
         services.AddScoped<RegisterRequestValidator>();
         services.AddScoped<LoginRequestValidator>();
         services.AddScoped<RefreshRequestValidator>();
 
+        //Profile validators
         services.AddScoped<GetProfileByIdRequestValidator>();
         services.AddScoped<SubscribeToRequestValidator>();
         services.AddScoped<UnsubscribeFromRequestValidator>();
 
+        //WishList validators
         services.AddScoped<CreateWishListRequestValidator>();
         services.AddScoped<GetProfileWishListsByIdRequestValidator>();
         services.AddScoped<CreateWishRequestValidator>();
+        services.AddScoped<UpdateWishListRequestValidator>();
+        services.AddScoped<DeleteWishListRequestValidator>();
         return services;
     }
 

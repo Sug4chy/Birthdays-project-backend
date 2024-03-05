@@ -58,4 +58,19 @@ public class WishListService(AppDbContext context) : IWishListService
         wishList.Wishes!.Add(wish);
         await context.SaveChangesAsync(ct);
     }
+
+    public async Task UpdateWishListAsync(WishList wishList, string name, string? description,
+        CancellationToken ct = default)
+    {
+        wishList.Name = name;
+        wishList.Description = description;
+        context.WishLists.Update(wishList);
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task DeleteWishListAsync(WishList wishList, CancellationToken ct = default)
+    {
+        context.WishLists.Remove(wishList);
+        await context.SaveChangesAsync(ct);
+    }
 }

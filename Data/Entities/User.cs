@@ -15,5 +15,4 @@ public class User : IdentityUser, IAuditableEntity
     public DateTime? RefreshTokenExpiryTime { get; set; }
     public DateTime CreatingTime { get; set; }
     public DateTime EditingTime { get; set; }
-    public DateTime? DeletingTime { get; set; }
 }

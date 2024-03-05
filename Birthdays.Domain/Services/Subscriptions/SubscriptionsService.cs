@@ -11,7 +11,7 @@ public class SubscriptionsService(AppDbContext context) : ISubscriptionsService
         CancellationToken ct = default)
         => context.Subscriptions
             .AnyAsync(s => s.BirthdayManId == birthdayManId
-                           && s.SubscriberId == subscriberId && s.DeletingTime == null, ct);
+                           && s.SubscriberId == subscriberId, ct);
 
     public async Task SubscribeAsync(Guid subscriberId, Guid birthdayManId, CancellationToken ct = default)
     {
@@ -27,8 +27,7 @@ public class SubscriptionsService(AppDbContext context) : ISubscriptionsService
     {
         var subscription = await context.Subscriptions
             .FirstOrDefaultAsync(s => s.BirthdayManId == birthdayManId
-                                      && s.SubscriberId == subscriberId
-                                      && s.DeletingTime == null, ct);
+                                      && s.SubscriberId == subscriberId, ct);
         if (subscription is null)
         {
             return Result.Failure(SubscriptionsErrors.NoSuchSubscription(subscriberId, birthdayManId));
