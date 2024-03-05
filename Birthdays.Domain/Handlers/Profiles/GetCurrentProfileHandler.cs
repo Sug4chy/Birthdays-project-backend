@@ -2,8 +2,6 @@
 using Domain.Accessors;
 using Domain.DTO;
 using Domain.DTO.Responses.Profiles;
-using Domain.Exceptions;
-using Domain.Results;
 using Domain.Services.Profiles;
 using Microsoft.Extensions.Logging;
 
@@ -19,9 +17,8 @@ public class GetCurrentProfileHandler(
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
         logger.LogInformation($"GetCurrentProfile request was received from user with id {currentUser.Id}");
+        
         var profile = await profileService.GetProfileByIdAsync(currentUser.ProfileId, ct);
-        NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(currentUser.ProfileId));
-
         logger.LogInformation("GetCurrentProfile response was successfully sent to user with id " +
                               $"{currentUser.Id}");
         return new GetCurrentProfileResponse

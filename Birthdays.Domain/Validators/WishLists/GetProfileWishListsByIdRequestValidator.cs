@@ -8,6 +8,7 @@ public class GetProfileWishListsByIdRequestValidator : AbstractValidator<GetProf
     public GetProfileWishListsByIdRequestValidator()
     {
         RuleFor(request => request.UserId)
-            .NotNull();
+            .NotEmpty()
+            .NotEqual(Guid.Empty.ToString());
     }
 }

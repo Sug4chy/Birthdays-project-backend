@@ -21,15 +21,6 @@ public class SubscribeToHandler(
         BadRequestException.ThrowByValidationResult(validationResult);
 
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
-        
-        if (!await profileService.CheckIfProfileExistsAsync(currentUser.ProfileId, ct))
-        {
-            throw new NotFoundException
-            {
-                Error = ProfilesErrors.NoSuchProfileWithId(currentUser.ProfileId)
-            };
-        }
-
         if (!await profileService.CheckIfProfileExistsAsync(request.BirthdayManId, ct))
         {
             throw new NotFoundException

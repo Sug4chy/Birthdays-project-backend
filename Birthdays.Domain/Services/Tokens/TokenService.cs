@@ -85,12 +85,6 @@ public class TokenService(IOptions<JwtConfigurationOptions> options) : ITokenSer
         return principal;
     }
 
-    public Claim[] GetClaimsFromJwt(string token)
-        => new JwtSecurityTokenHandler()
-            .ReadJwtToken(token)
-            .Claims
-            .ToArray();
-
     private SymmetricSecurityKey GetSymmetricSecurityKey()
         => new(
             Encoding.UTF8.GetBytes(_jwtConfigurationOptions.SymmetricSecurityKey));

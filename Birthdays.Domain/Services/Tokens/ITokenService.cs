@@ -9,5 +9,4 @@ public interface ITokenService
     string GenerateAccessToken(User user);
     RefreshTokenModel GenerateRefreshToken();
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
-    Claim[] GetClaimsFromJwt(string token);
 }

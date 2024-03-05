@@ -8,7 +8,6 @@ public class GetProfileByIdRequestValidator : AbstractValidator<GetProfileByIdRe
     public GetProfileByIdRequestValidator()
     {
         RuleFor(request => request.UserId)
-            .NotNull()
-            .NotEmpty();
+            .NotEqual(Guid.Empty);
     }
 }

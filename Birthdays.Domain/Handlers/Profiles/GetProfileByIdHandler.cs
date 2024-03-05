@@ -34,10 +34,8 @@ public class GetProfileByIdHandler(
         
         var user = await userService.GetUserByIdAsync(request.UserId.ToString(), ct);
         NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithId(request.UserId.ToString()));
-
         var profile = await profileService.GetProfileByIdAsync(user!.ProfileId, ct);
-        NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(user.ProfileId));
-
+        
         logger.LogInformation($"GetProfileByUsernameResponse was successfully sent to {currentUser.Email}");
         return new GetProfileByIdResponse
         {

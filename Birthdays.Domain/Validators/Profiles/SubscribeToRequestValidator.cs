@@ -8,6 +8,6 @@ public class SubscribeToRequestValidator : AbstractValidator<SubscribeToRequest>
     public SubscribeToRequestValidator()
     {
         RuleFor(request => request.BirthdayManId)
-            .NotNull();
+            .NotEqual(Guid.Empty);
     }
 }

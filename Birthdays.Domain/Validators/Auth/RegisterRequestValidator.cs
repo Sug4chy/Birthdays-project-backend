@@ -8,14 +8,19 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
     public RegisterRequestValidator()
     {
-        RuleFor(req => req.Password)
-            .NotNull()
-            .NotEmpty()
-            .Length(8, 125);
-        RuleFor(request => request.BirthDate)
-            .NotNull();
+        RuleFor(request => request.Name)
+            .NotEmpty();
+        RuleFor(request => request.Surname)
+            .NotEmpty();
+        RuleFor(request => request.Patronymic)
+            .Must(BeNullOrNotEmpty);
         RuleFor(request => request.BirthDate)
             .Must(BeValidDate);
+        RuleFor(request => request.Email)
+            .NotEmpty();
+        RuleFor(req => req.Password)
+            .NotEmpty()
+            .Length(8, 125);
         RuleFor(req => req.Password)
             .Must(p => p.Any(char.IsDigit))
             .WithErrorCode("NoDigitsValidator")
@@ -27,4 +32,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
            && date.Month is >= 1 and <= 12
            && date.Day >= 1
            && date.Day <= DateTime.DaysInMonth(date.Year, date.Month);
+
+    private static bool BeNullOrNotEmpty(string? s)
+        => s is null || s.Length != 0;
 }

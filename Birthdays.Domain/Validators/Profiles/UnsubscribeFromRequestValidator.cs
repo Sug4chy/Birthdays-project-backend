@@ -8,6 +8,6 @@ public class UnsubscribeFromRequestValidator : AbstractValidator<UnsubscribeFrom
     public UnsubscribeFromRequestValidator()
     {
         RuleFor(request => request.BirthdayManId)
-            .NotNull();
+            .NotEqual(Guid.Empty);
     }
 }

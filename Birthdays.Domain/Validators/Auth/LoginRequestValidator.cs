@@ -1,5 +1,4 @@
 ﻿using Domain.DTO.Requests.Auth;
-using Domain.Results;
 using FluentValidation;
 
 namespace Domain.Validators.Auth;
@@ -8,8 +7,9 @@ public class LoginRequestValidator: AbstractValidator<LoginRequest>
 {
     public LoginRequestValidator()
     {
+        RuleFor(request => request.Email)
+            .NotEmpty();
         RuleFor(req => req.Password)
-            .NotNull()
             .NotEmpty()
             .Length(8, 125);
         RuleFor(req => req.Password)

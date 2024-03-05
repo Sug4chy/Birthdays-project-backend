@@ -8,11 +8,13 @@ public class CreateWishRequestValidator : AbstractValidator<CreateWishRequest>
     public CreateWishRequestValidator()
     {
         RuleFor(request => request.WishListId)
-            .NotNull();
-        RuleFor(request => request.Wish)
-            .NotNull();
-        RuleFor(request => request.Wish.Name)
             .NotNull()
+            .NotEqual(Guid.Empty);
+        RuleFor(request => request.Wish.Name)
             .NotEmpty();
+        RuleFor(request => request.Wish.Description)
+            .Must(s => s is null || s.Length != 0);
+        RuleFor(request => request.Wish.GiftRef)
+            .Must(s => s is null || s.Length != 0);
     }
 }

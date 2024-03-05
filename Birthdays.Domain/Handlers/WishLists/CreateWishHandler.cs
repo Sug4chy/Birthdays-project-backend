@@ -1,6 +1,5 @@
 ﻿using Domain.Accessors;
 using Domain.DTO.Requests.WishLists;
-using Domain.DTO.Responses;
 using Domain.DTO.Responses.WishLists;
 using Domain.Exceptions;
 using Domain.Results;
