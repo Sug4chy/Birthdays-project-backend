@@ -1,7 +1,7 @@
 ﻿using Domain.DTO;
 using FluentValidation;
 
-namespace Domain.Validators.WishLists;
+namespace Domain.Validators.Dto;
 
 public class WishDtoValidator : AbstractValidator<WishDto>
 {

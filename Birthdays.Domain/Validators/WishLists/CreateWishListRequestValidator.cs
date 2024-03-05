@@ -1,4 +1,5 @@
 ﻿using Domain.DTO.Requests.WishLists;
+using Domain.Validators.Dto;
 using FluentValidation;
 
 namespace Domain.Validators.WishLists;
