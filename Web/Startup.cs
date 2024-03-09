@@ -23,7 +23,7 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             .WithIdentity();
 
         services.AddConfiguredJwtAuthentication(configuration);
-        services.AddAuthorization();
+        services.AddAuthorizationWithPolicies();
 
         services.AddCors();
 

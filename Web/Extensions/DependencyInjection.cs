@@ -4,9 +4,12 @@ using Data.Entities;
 using Domain.Configs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Web.Authorization.Handlers;
+using Web.Authorization.Requirements;
 
 namespace Web.Extensions;
 
@@ -76,4 +79,13 @@ public static class DependencyInjection
                     ValidateIssuerSigningKey = true
                 };
             });
+
+    public static IServiceCollection AddAuthorizationWithPolicies(this IServiceCollection services)
+    {
+        services.AddAuthorizationBuilder()
+            .AddPolicy("ShouldIncludeGuidInJwt", builder => 
+                builder.Requirements.Add(new GuidClaimRequirement()));
+        services.AddSingleton<IAuthorizationHandler, GuidClaimHandler>();
+        return services;
+    }
 }
