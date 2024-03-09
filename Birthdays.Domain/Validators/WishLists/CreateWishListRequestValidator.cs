@@ -11,7 +11,7 @@ public class CreateWishListRequestValidator : AbstractValidator<CreateWishListRe
         RuleFor(request => request.WishList.Name)
             .NotEmpty();
         RuleFor(request => request.WishList.Id)
-            .Equal(Guid.Empty);
+            .Null();
         RuleFor(request => request.WishList.Description)
             .Must(s => s is null || s.Length != 0);
         RuleForEach(request => request.WishList.Wishes)

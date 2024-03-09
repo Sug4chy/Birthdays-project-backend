@@ -8,4 +8,7 @@ public static class WishListsErrors
     public static Error WishListDoesntBelongToUser(Guid wlId, Guid userId)
         => new(nameof(WishListDoesntBelongToUser), 
             $"WishList with id {wlId} doesn't belong to user with id {userId}");
+    
+    public static Error NoSuchWishWithId(Guid id)
+        => new(nameof(NoSuchWishWithId), $"Wish with id {id} doesn't exist");
 }

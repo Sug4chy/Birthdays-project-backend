@@ -58,11 +58,22 @@ public class WishListsController : ControllerBase
             .WrappedWithLinks();
 
     [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpDelete("current/[controller]/{wishListId}")]
+    [HttpDelete("current/[controller]/{wishListId:guid}")]
     public Task<WrapperResponseDto<DeleteWishListResponse>> DeleteWishList(
         [FromRoute] Guid wishListId,
         [FromServices] DeleteWishListHandler handler,
         CancellationToken ct = default)
         => handler.Handle(new DeleteWishListRequest { WishListId = wishListId }, ct)
+            .WrappedWithLinks();
+
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPut("current/[controller]/{wishListId:guid}/wishes/{wishId:guid}")]
+    public Task<WrapperResponseDto<UpdateWishResponse>> UpdateWish(
+        [FromRoute] Guid wishListId,
+        [FromRoute] Guid wishId,
+        [FromBody] UpdateWishRequest request,
+        [FromServices] UpdateWishHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(request with { WishListId = wishListId, WishId = wishId }, ct)
             .WrappedWithLinks();
 }
