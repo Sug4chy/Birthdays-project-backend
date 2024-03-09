@@ -9,10 +9,10 @@ public class AppMappingProfile : MappingProfileBase
 {
     public AppMappingProfile()
     {
-        CreateMap<User, UserDto>();
         CreateMap<Profile, ProfileDto>();
-        CreateMap<Subscription, SubscriptionDto>();
-
+        CreateMap<WishList, WishListDto>();
+        CreateMap<Wish, WishDto>();
+        
         CreateMap<LoginRequest, LoginModel>();
     }
 }

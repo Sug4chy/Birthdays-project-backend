@@ -30,10 +30,9 @@ public class AuthController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("logout")]
     public Task<WrapperResponseDto<LogoutResponse>> Logout(
-        [FromBody] LogoutRequest request,
         [FromServices] LogoutHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request, ct).WrappedWithLinks();
+        => handler.Handle(ct).WrappedWithLinks();
 
     [HttpPost("refresh")]
     public Task<WrapperResponseDto<RefreshResponse>> Refresh(

@@ -6,9 +6,10 @@ using Data.Entities;
 using Domain.Configs;
 using Domain.Exceptions;
 using Domain.Models;
-using Domain.Results;
+using FluentValidation.Results;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ValidationFailure = FluentValidation.Results.ValidationFailure;
 
 namespace Domain.Services.Tokens;
 
@@ -22,7 +23,8 @@ public class TokenService(IOptions<JwtConfigurationOptions> options) : ITokenSer
         {
             new(ClaimTypes.Name, user.Name),
             new(ClaimTypes.Surname, user.Surname),
-            new(ClaimTypes.Email, user.Email!)
+            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.NameIdentifier, user.Id)
         };
         
         var jwt = new JwtSecurityToken(
@@ -50,7 +52,7 @@ public class TokenService(IOptions<JwtConfigurationOptions> options) : ITokenSer
         };
     }
 
-    public ClaimsPrincipal GetPrincipalFromExpiredTokenAsync(string token)
+    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
@@ -69,7 +71,15 @@ public class TokenService(IOptions<JwtConfigurationOptions> options) : ITokenSer
             || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
                 StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new CustomValidationException(new Error("InvalidToken", "Invalid access token"));
+
+            BadRequestException.ThrowByValidationResult(new ValidationResult
+            {
+                Errors = [new ValidationFailure
+                {
+                    ErrorCode = "InvalidToken", 
+                    ErrorMessage = "Invalid access token"
+                }]
+            });
         }
         
         return principal;

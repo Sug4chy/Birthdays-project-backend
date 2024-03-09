@@ -2,12 +2,13 @@
 using Domain.Exceptions;
 using System.Net.Mime;
 using Domain.Results;
-using FluentValidation;
 using Web.Models;
 
 namespace Web.Middlewares;
 
-public class ErrorHandlingMiddleware : IMiddleware
+public class ErrorHandlingMiddleware(
+    ILogger<ErrorHandlingMiddleware> logger
+) : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -18,23 +19,21 @@ public class ErrorHandlingMiddleware : IMiddleware
         catch (Exception ex)
         {
             string newContent;
+            ServerErrorModel errorModel;
             switch (ex)
             {
-                case ValidationException validationException:
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    newContent = JsonSerializer.Serialize(new ServerErrorModel(
-                        validationException.Errors
-                        .Select(Error.FromValidationFailure).First()));
-                    break;
-                case CustomExceptionBase customExceptionBase:
+                case ExceptionBase customExceptionBase:
                     context.Response.StatusCode = customExceptionBase.StatusCode;
-                    newContent = JsonSerializer.Serialize(new ServerErrorModel(
-                        customExceptionBase.Errors.First()));
+                    errorModel = new ServerErrorModel(customExceptionBase.Error);
+                    logger.LogError($"{errorModel.Error.Code}:{errorModel.Error.Description}");
+                    newContent = JsonSerializer.Serialize(errorModel);
                     break;
                 default:
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    newContent = JsonSerializer.Serialize(new ServerErrorModel(
-                        new Error(ex.GetType().ToString(), ex.Message)));
+                    errorModel = new ServerErrorModel(
+                        new Error(ex.GetType().ToString(), ex.Message));
+                    logger.LogError($"{errorModel.Error.Code}:{errorModel.Error.Description}");
+                    newContent = JsonSerializer.Serialize(errorModel);
                     break;
             }
 

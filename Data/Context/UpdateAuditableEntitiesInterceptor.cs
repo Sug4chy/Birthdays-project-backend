@@ -29,7 +29,6 @@ public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
                     entry.Property(x => x.EditingTime).CurrentValue = DateTime.UtcNow;
                     break;
                 case EntityState.Deleted:
-                    entry.Property(x => x.DeletingTime).CurrentValue = DateTime.UtcNow;
                     break;
                 case EntityState.Detached:
                     break;

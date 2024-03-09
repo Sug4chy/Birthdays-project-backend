@@ -1,14 +1,12 @@
-﻿using AutoMapper;
-using Domain.DTO;
-using Domain.DTO.Requests.Auth;
+﻿using Domain.DTO.Requests.Auth;
 using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Models;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
 using Domain.Services.Users;
-using Domain.Validators;
-using Serilog;
+using Domain.Validators.Auth;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Auth;
 
@@ -17,17 +15,14 @@ public class RegisterHandler(
     IUserService userService,
     IProfileService profileService,
     RegisterRequestValidator requestValidator,
-    IMapper mapper)
+    ILogger<RegisterHandler> logger)
 {
     public async Task<RegisterResponse> Handle(
         RegisterRequest request, CancellationToken ct = default)
     {
-        Log.Information($"Register request from user {request.Email} was received.");
+        logger.LogInformation($"Register request from user {request.Email} was received.");
         var validationResult = await requestValidator.ValidateAsync(request, ct);
-        if (!validationResult.IsSuccess)
-        {
-            throw new CustomValidationException(validationResult.Error);
-        }
+        BadRequestException.ThrowByValidationResult(validationResult);
 
         var profile = await profileService.CreateAsync(ct);
         var user = await userService.CreateUserAsync(request, profile, ct);
@@ -40,19 +35,16 @@ public class RegisterHandler(
 
         if (!registerResult.IsSuccess)
         {
-            Log.Error($"\"{registerResult.Error.Description}\" " +
-                      $"error was occurred while registering user {request.Email}");
-            IdentityException.ThrowByError(registerResult.Error);
+            UnauthorizedException.ThrowByError(registerResult.Error);
         }
 
         var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
         
-        Log.Information($"Register response was successfully sent for user {request.Email}");
+        logger.LogInformation($"Register response was successfully sent for user {request.Email}");
         return new RegisterResponse
         {
             AccessToken = tokensModel.AccessToken,
-            RefreshToken = tokensModel.RefreshToken,
-            User = mapper.Map<UserDto>(user)
+            RefreshToken = tokensModel.RefreshToken
         };
     }
 }

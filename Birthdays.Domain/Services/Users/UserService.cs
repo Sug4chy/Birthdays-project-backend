@@ -7,7 +7,7 @@ namespace Domain.Services.Users;
 
 public class UserService(AppDbContext context) : IUserService
 {
-    public Task<User> CreateUserAsync(RegisterRequest request, 
+    public Task<User> CreateUserAsync(RegisterRequest request,
         Profile profile, CancellationToken ct = default)
         => Task.FromResult(new User
         {
@@ -18,16 +18,14 @@ public class UserService(AppDbContext context) : IUserService
             Patronymic = request.Patronymic,
             UserName = request.Email,
             Email = request.Email,
-            BirthDate = DateOnly.FromDateTime(request.BirthDate)
+            BirthDate = new DateOnly(request.BirthDate.Year, request.BirthDate.Month, request.BirthDate.Day)
         });
 
-    public async Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
-    {
-        var profile = await context.Profiles
-            .Include(p => p.User)
-            .Include(p => p.SubscriptionsAsSubscriber)
-            .Include(p => p.SubscriptionsAsBirthdayMan)
-            .FirstOrDefaultAsync(p => p.User!.Email == email, ct);
-        return profile?.User;
-    }
+    public Task<User?> GetUserByEmailAsync(string email, CancellationToken ct = default)
+        => context.Users
+            .FirstOrDefaultAsync(u => u.Email == email, ct);
+
+    public Task<User?> GetUserByIdAsync(string id, CancellationToken ct = default)
+        => context.Users
+            .FirstOrDefaultAsync(u => u.Id == id, ct);
 }

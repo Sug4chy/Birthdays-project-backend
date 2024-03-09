@@ -42,9 +42,6 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreatingTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletingTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime>("EditingTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -68,9 +65,6 @@ namespace Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatingTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletingTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("EditingTime")
@@ -102,9 +96,6 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreatingTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletingTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -126,9 +117,6 @@ namespace Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatingTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletingTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("EditingTime")
@@ -166,9 +154,6 @@ namespace Data.Migrations
 
                     b.Property<string>("CurrentRefreshToken")
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("DeletingTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("EditingTime")
                         .HasColumnType("timestamp with time zone");
@@ -214,7 +199,7 @@ namespace Data.Migrations
                     b.Property<Guid>("ProfileId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
@@ -257,9 +242,6 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreatingTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletingTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -269,8 +251,12 @@ namespace Data.Migrations
                     b.Property<string>("GiftRef")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ImageId")
+                    b.Property<Guid?>("ImageId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("WishListId")
                         .HasColumnType("uuid");
@@ -295,9 +281,6 @@ namespace Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatingTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletingTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -494,9 +477,7 @@ namespace Data.Migrations
                 {
                     b.HasOne("Data.Entities.DatabaseFile", "Image")
                         .WithOne("Wish")
-                        .HasForeignKey("Data.Entities.Wish", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Data.Entities.Wish", "ImageId");
 
                     b.HasOne("Data.Entities.WishList", "WishList")
                         .WithMany("Wishes")

@@ -1,12 +1,10 @@
-﻿using System.Text;
-using Data.Extensions;
+﻿using Data.Extensions;
 using Domain.Configs;
 using Domain.Extensions;
 using Domain.Mapping;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Web.Extensions;
+using Web.Initializers;
 using Web.Middlewares;
 
 namespace Web;
@@ -17,34 +15,20 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
     {
         services.Configure<JwtConfigurationOptions>(
             configuration.GetSection(JwtConfigurationOptions.Position));
-        
+
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerWithJwtAuthentication();
 
         services.AddDataLayerServices(configuration)
             .WithIdentity();
-        
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = configuration.GetValue<string>("Issuer"),
-                    ValidateAudience = true,
-                    ValidAudience = configuration.GetValue<string>("Audience"),
-                    ValidateLifetime = true,
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                            configuration.GetValue<string>("SymmetricSecurityKey")!)),
-                    ValidateIssuerSigningKey = true
-                };
-            });
+
+        services.AddConfiguredJwtAuthentication(configuration);
+        services.AddAuthorization();
 
         services.AddCors();
 
         services.AddControllers();
-        
+
         services.AddValidators();
         services.AddApplicationServices();
         services.AddAutoMapper(typeof(AppMappingProfile));
@@ -54,8 +38,13 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             .WriteTo.Console()
             .MinimumLevel.Debug()
             .CreateLogger();
-        
+
         services.AddSingleton<ErrorHandlingMiddleware>();
+        
+        services.AddHttpContextAccessor();
+        services.AddCurrentUserAccessor();
+
+        services.AddAsyncInitializer<MigrationAsyncInitializer>();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -65,19 +54,22 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        
-        app.UseCors(builder => 
-            builder 
+
+        app.UseCors(builder =>
+            builder
                 //.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5174")
                 .AllowAnyOrigin()
-                .WithMethods("GET", "POST", "PUT", "DELETE"));
-        
+                .WithMethods(HttpMethods.Get,
+                    HttpMethods.Post,
+                    HttpMethods.Put,
+                    HttpMethods.Delete));
+
         app.UseRouting();
         app.UseMiddleware<ErrorHandlingMiddleware>();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.UseEndpoints(e => e.MapControllers());
     }
 }

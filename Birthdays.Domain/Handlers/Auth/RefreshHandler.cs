@@ -6,7 +6,8 @@ using Domain.Results;
 using Domain.Services.Auth;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
-using Domain.Validators;
+using Domain.Validators.Auth;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.Auth;
 
@@ -14,31 +15,35 @@ public class RefreshHandler(
     RefreshRequestValidator validator,
     ITokenService tokenService,
     IUserService userService,
-    IAuthService authService)
+    IAuthService authService,
+    ILogger<RefreshHandler> logger)
 {
     public async Task<RefreshResponse> Handle(RefreshRequest request, CancellationToken ct = default)
     {
+        logger.LogInformation("Refresh request was received from user " +
+                              $"with refresh token {request.RefreshToken}");
         var validationResult = await validator.ValidateAsync(request, ct);
-        if (!validationResult.IsSuccess)
-        {
-            throw new CustomValidationException(validationResult.Error);
-        }
+        BadRequestException.ThrowByValidationResult(validationResult);
 
         var principal = tokenService
-            .GetPrincipalFromExpiredTokenAsync(request.ExpiredAccessToken);
+            .GetPrincipalFromExpiredToken(request.ExpiredAccessToken);
         string? username = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-        NotFoundException.ThrowIfNull(username, "\"Username\" claim is required");
+        NotFoundException.ThrowIfNull(username, AuthErrors.DoesNotIncludeClaim(ClaimTypes.Email));
 
         var user = await userService.GetUserByEmailAsync(username!, ct);
-        NotFoundException.ThrowIfNull(user, $"User with email {username} wasn't found");
+        NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(username!));
 
         if (user!.CurrentRefreshToken != request.RefreshToken
             || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
-            throw new CustomValidationException(AuthErrors.InvalidRefreshToken);
+            throw new ForbiddenException
+            {
+                Error = AuthErrors.InvalidRefreshToken
+            };
         }
-        
+
         var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
+        logger.LogInformation($"Refresh response was successfully sent to user with email {user.Email}");
         return new RefreshResponse
         {
             RefreshToken = tokensModel.RefreshToken,
