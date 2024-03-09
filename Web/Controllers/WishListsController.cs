@@ -38,7 +38,7 @@ public class WishListsController : ControllerBase
             .WrappedWithLinks();
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("current/[controller]/{wishListId}")]
+    [HttpPost("current/[controller]/{wishListId:guid}")]
     public Task<WrapperResponseDto<CreateWishResponse>> CreateWish(
         [FromRoute] Guid wishListId,
         [FromBody] CreateWishRequest request,
@@ -48,7 +48,7 @@ public class WishListsController : ControllerBase
             .WrappedWithLinks();
 
     [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPut("current/[controller]/{wishListId}")]
+    [HttpPut("current/[controller]/{wishListId:guid}")]
     public Task<WrapperResponseDto<UpdateWishListResponse>> UpdateWishList(
         [FromRoute] Guid wishListId,
         [FromBody] UpdateWishListRequest request,

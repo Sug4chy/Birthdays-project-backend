@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<GetCurrentProfileHandler>();
         services.AddScoped<SubscribeToHandler>();
         services.AddScoped<UnsubscribeFromHandler>();
+        services.AddScoped<GetAllProfilesHandler>();
 
         //WishList handlers
         services.AddScoped<CreateWishListHandler>();

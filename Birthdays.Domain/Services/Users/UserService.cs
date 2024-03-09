@@ -28,4 +28,7 @@ public class UserService(AppDbContext context) : IUserService
     public Task<User?> GetUserByIdAsync(string id, CancellationToken ct = default)
         => context.Users
             .FirstOrDefaultAsync(u => u.Id == id, ct);
+
+    public Task<List<User>> GetAllUsersAsync(CancellationToken ct = default)
+        => context.Users.ToListAsync(ct);
 }

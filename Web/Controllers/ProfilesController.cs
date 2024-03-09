@@ -14,7 +14,7 @@ namespace Web.Controllers;
 public class ProfilesController : ControllerBase
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpGet("{userId}")]
+    [HttpGet("{userId:guid}")]
     public Task<WrapperResponseDto<GetProfileByIdResponse>> GetProfileById(
         [FromRoute] Guid userId,
         [FromServices] GetProfileByIdHandler handler,
@@ -33,7 +33,7 @@ public class ProfilesController : ControllerBase
         => handler.Handle(ct).WrappedWithLinks();
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("{profileId}/subscribe")]
+    [HttpPost("{profileId:guid}/subscribe")]
     public Task<WrapperResponseDto<SubscribeToResponse>> SubscribeTo(
         [FromRoute] Guid profileId,
         [FromServices] SubscribeToHandler handler,
@@ -45,7 +45,7 @@ public class ProfilesController : ControllerBase
             ct).WrappedWithLinks();
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("{profileId}/unsubscribe")]
+    [HttpPost("{profileId:guid}/unsubscribe")]
     public Task<WrapperResponseDto<UnsubscribeFromResponse>> UnsubscribeFrom(
         [FromRoute] Guid profileId,
         [FromServices] UnsubscribeFromHandler handler,
@@ -55,4 +55,11 @@ public class ProfilesController : ControllerBase
                 BirthdayManId = profileId
             },
             ct).WrappedWithLinks();
+
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet]
+    public Task<WrapperResponseDto<GetAllProfilesResponse>> GetAllProfiles(
+        [FromServices] GetAllProfilesHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(ct).WrappedWithLinks();
 }

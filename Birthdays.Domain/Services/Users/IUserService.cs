@@ -12,4 +12,6 @@ public interface IUserService
         CancellationToken ct = default);
 
     Task<User?> GetUserByIdAsync(string id, CancellationToken ct = default);
+
+    Task<List<User>> GetAllUsersAsync(CancellationToken ct = default);
 }
