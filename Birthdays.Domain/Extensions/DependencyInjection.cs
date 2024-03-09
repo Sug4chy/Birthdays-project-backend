@@ -41,6 +41,7 @@ public static class DependencyInjection
         services.AddScoped<UpdateWishListHandler>();
         services.AddScoped<DeleteWishListHandler>();
         services.AddScoped<UpdateWishHandler>();
+        services.AddScoped<DeleteWishHandler>();
         
         return services;
     }
@@ -75,6 +76,7 @@ public static class DependencyInjection
         services.AddScoped<UpdateWishListRequestValidator>();
         services.AddScoped<DeleteWishListRequestValidator>();
         services.AddScoped<UpdateWishRequestValidator>();
+        services.AddScoped<DeleteWishRequestValidator>();
         
         return services;
     }

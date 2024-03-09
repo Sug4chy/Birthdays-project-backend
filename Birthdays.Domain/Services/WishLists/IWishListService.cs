@@ -12,4 +12,5 @@ public interface IWishListService
     Task UpdateWishListAsync(WishList wishList, string name, string? description, CancellationToken ct = default);
     Task UpdateWishAsync(Wish wish, WishDto dto, CancellationToken ct = default);
     Task DeleteWishListAsync(WishList wishList, CancellationToken ct = default);
+    Task DeleteWishAsync(Wish wish, CancellationToken ct = default);
 }

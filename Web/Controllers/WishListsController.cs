@@ -76,4 +76,18 @@ public class WishListsController : ControllerBase
         CancellationToken ct = default)
         => handler.Handle(request with { WishListId = wishListId, WishId = wishId }, ct)
             .WrappedWithLinks();
+
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpDelete("current/[controller]/{wishListId:guid}/wishes/{wishId:guid}")]
+    public Task<WrapperResponseDto<DeleteWishResponse>> DeleteWish(
+        [FromRoute] Guid wishListId,
+        [FromRoute] Guid wishId,
+        [FromServices] DeleteWishHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(new DeleteWishRequest
+            {
+                WishListId = wishListId,
+                WishId = wishId
+            },
+            ct).WrappedWithLinks();
 }

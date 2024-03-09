@@ -82,4 +82,12 @@ public class WishListService(AppDbContext context) : IWishListService
         context.WishLists.Remove(wishList);
         await context.SaveChangesAsync(ct);
     }
+
+    public async Task DeleteWishAsync(Wish wish, CancellationToken ct = default)
+    {
+        var wishList = wish.WishList;
+        wishList!.Wishes!.Remove(wish);
+        context.WishLists.Update(wishList);
+        await context.SaveChangesAsync(ct);
+    }
 }
