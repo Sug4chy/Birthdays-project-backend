@@ -9,6 +9,7 @@ using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Services.WishLists;
 using Domain.Validators.Auth;
+using Domain.Validators.Dto;
 using Domain.Validators.Profiles;
 using Domain.Validators.WishLists;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,6 +78,11 @@ public static class DependencyInjection
         services.AddScoped<DeleteWishListRequestValidator>();
         services.AddScoped<UpdateWishRequestValidator>();
         services.AddScoped<DeleteWishRequestValidator>();
+
+        //Dto validators
+        services.AddScoped<WishListDtoValidator>();
+        services.AddScoped<WishDtoValidator>();
+        services.AddScoped<DateDtoValidator>();
         
         return services;
     }

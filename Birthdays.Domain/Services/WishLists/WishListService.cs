@@ -73,7 +73,6 @@ public class WishListService(AppDbContext context) : IWishListService
         wish.Name = dto.Name;
         wish.Description = dto.Description;
         wish.GiftRef = dto.GiftRef;
-        context.WishLists.Update(wish.WishList!);
         await context.SaveChangesAsync(ct);
     }
 
@@ -87,7 +86,6 @@ public class WishListService(AppDbContext context) : IWishListService
     {
         var wishList = wish.WishList;
         wishList!.Wishes!.Remove(wish);
-        context.WishLists.Update(wishList);
         await context.SaveChangesAsync(ct);
     }
 }
