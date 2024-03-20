@@ -7,7 +7,7 @@ namespace Domain.Services.WishLists;
 
 public class WishListService(AppDbContext context) : IWishListService
 {
-    public async Task CreateWishListAsync(WishListDto dto, Profile birthdayMan, CancellationToken ct = default)
+    public async Task<Guid> CreateWishListAsync(WishListDto dto, Profile birthdayMan, CancellationToken ct = default)
     {
         var wishList = new WishList
         {
@@ -31,6 +31,7 @@ public class WishListService(AppDbContext context) : IWishListService
 
         await context.WishLists.AddAsync(wishList, ct);
         await context.SaveChangesAsync(ct);
+        return wishList.Id;
     }
 
     public Task<List<WishList>> GetWishListsByProfileIdAsync(Guid profileId,
@@ -45,7 +46,7 @@ public class WishListService(AppDbContext context) : IWishListService
             .Include(wl => wl.Wishes)
             .FirstOrDefaultAsync(wl => wl.Id == wishListId, ct);
 
-    public async Task CreateWishAsync(WishDto wishDto, WishList wishList, CancellationToken ct = default)
+    public async Task<Guid> CreateWishAsync(WishDto wishDto, WishList wishList, CancellationToken ct = default)
     {
         var wish = new Wish
         {
@@ -57,6 +58,7 @@ public class WishListService(AppDbContext context) : IWishListService
         };
         wishList.Wishes!.Add(wish);
         await context.SaveChangesAsync(ct);
+        return wish.Id;
     }
 
     public async Task UpdateWishListAsync(WishList wishList, string name, string? description,

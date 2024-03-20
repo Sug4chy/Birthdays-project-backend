@@ -13,7 +13,8 @@ public class LogoutHandler(
     public async Task Handle(CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
-        logger.LogInformation($"Logout request was received for user {currentUser.Email}");
+        logger.LogInformation($"LogoutRequest was received " +
+                              $"from user with email {currentUser.Email}.");
         
         var logoutResult = await authService.LogoutUserAsync(currentUser, ct);
         if (!logoutResult.IsSuccess)
@@ -21,6 +22,6 @@ public class LogoutHandler(
             UnauthorizedException.ThrowByError(logoutResult.Error);
         }
         
-        logger.LogInformation($"Logout response was successfully sent for user {currentUser.Email}");
+        logger.LogInformation($"User with email {currentUser.Email} was logged out.");
     }
 }

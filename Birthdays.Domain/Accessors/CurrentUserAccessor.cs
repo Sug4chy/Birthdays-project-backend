@@ -27,4 +27,10 @@ public class CurrentUserAccessor(
                           };
         return currentUser;
     }
+
+    public async Task<string> GetCurrentUserEmailAsync(CancellationToken ct = default)
+    {
+        var user = await GetCurrentUserAsync(ct);
+        return user.Email!;
+    }
 }

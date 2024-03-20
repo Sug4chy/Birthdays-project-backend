@@ -20,8 +20,6 @@ public class RefreshHandler(
 {
     public async Task<RefreshResponse> Handle(RefreshRequest request, CancellationToken ct = default)
     {
-        logger.LogInformation("Refresh request was received from user " +
-                              $"with refresh token {request.RefreshToken}");
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
 
@@ -29,6 +27,8 @@ public class RefreshHandler(
             .GetPrincipalFromExpiredToken(request.ExpiredAccessToken);
         string? username = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         NotFoundException.ThrowIfNull(username, AuthErrors.DoesNotIncludeClaim(ClaimTypes.Email));
+        logger.LogInformation($"{request.GetType().Name} was received " +
+                              $"from user with email {username}.");
 
         var user = await userService.GetUserByEmailAsync(username!, ct);
         NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithEmail(username!));
@@ -43,7 +43,7 @@ public class RefreshHandler(
         }
 
         var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
-        logger.LogInformation($"Refresh response was successfully sent to user with email {user.Email}");
+        logger.LogInformation($"Tokens for user with email {username} were successfully refreshed.");
         return new RefreshResponse
         {
             RefreshToken = tokensModel.RefreshToken,

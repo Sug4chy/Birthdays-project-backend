@@ -20,7 +20,8 @@ public class RegisterHandler(
     public async Task<RegisterResponse> Handle(
         RegisterRequest request, CancellationToken ct = default)
     {
-        logger.LogInformation($"Register request from user {request.Email} was received.");
+        logger.LogInformation($"{request.GetType().Name} was received " +
+                              $"from user with email {request.Email}.");
         var validationResult = await requestValidator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
 
@@ -40,7 +41,7 @@ public class RegisterHandler(
 
         var tokensModel = await authService.GenerateAndSetTokensAsync(user, ct);
         
-        logger.LogInformation($"Register response was successfully sent for user {request.Email}");
+        logger.LogInformation($"User with email {request.Email} was successfully registered.");
         return new RegisterResponse
         {
             AccessToken = tokensModel.AccessToken,

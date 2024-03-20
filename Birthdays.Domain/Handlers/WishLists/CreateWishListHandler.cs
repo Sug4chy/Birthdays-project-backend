@@ -21,14 +21,16 @@ public class CreateWishListHandler(
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
         
-        logger.LogInformation($"CreateWishList request was received from {currentUser.Email} user");
+        logger.LogInformation($"{request.GetType().Name} was received " +
+                              $"from user with {currentUser.Email}.");
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
 
         var profile = await profileService.GetProfileByIdAsync(currentUser.ProfileId, ct);
         NotFoundException.ThrowIfNull(profile, ProfilesErrors.NoSuchProfileWithId(currentUser.ProfileId));
 
-        await wishListService.CreateWishListAsync(request.WishList, profile!, ct);
-        logger.LogInformation($"CreateWishList response was successfully sent to {currentUser.Email} user");
+        var newWishListId = await wishListService.CreateWishListAsync(request.WishList, profile!, ct);
+        logger.LogInformation($"User with email {currentUser.Email} successfully " +
+                              $"created wish list with id {newWishListId}.");
     }
 }

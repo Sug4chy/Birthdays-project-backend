@@ -25,14 +25,14 @@ public class ErrorHandlingMiddleware(
                 case ExceptionBase customExceptionBase:
                     context.Response.StatusCode = customExceptionBase.StatusCode;
                     errorModel = new ServerErrorModel(customExceptionBase.Error);
-                    logger.LogError($"{errorModel.Error.Code}:{errorModel.Error.Description}");
+                    logger.LogError($"[{errorModel.Error.Code}]: {errorModel.Error.Description}");
                     newContent = JsonSerializer.Serialize(errorModel);
                     break;
                 default:
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     errorModel = new ServerErrorModel(
                         new Error(ex.GetType().ToString(), ex.Message));
-                    logger.LogError($"{errorModel.Error.Code}:{errorModel.Error.Description}");
+                    logger.LogError($"[{errorModel.Error.Code}]: {errorModel.Error.Description}");
                     newContent = JsonSerializer.Serialize(errorModel);
                     break;
             }
