@@ -9,12 +9,14 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     public RegisterRequestValidator(DateDtoValidator dateDtoValidator)
     {
         RuleFor(request => request.Name)
-            .NotEmpty();
+            .NotEmpty()
+            .Length(1, 50);
         RuleFor(request => request.Surname)
-            .NotEmpty();
+            .NotEmpty()
+            .Length(1, 50);
         RuleFor(request => request.Patronymic)
-            .Must(s => s is null || s.Length != 0)
-            .WithErrorCode("NullOrEmptyValidator")
+            .Must(s => s is null || s.Length is > 0 and <= 50)
+            .WithErrorCode("NullOrNonEmptyValidator")
             .WithMessage("Patronymic must be null or non-empty");
         RuleFor(request => request.BirthDate)
             .SetValidator(dateDtoValidator);

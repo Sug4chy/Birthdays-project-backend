@@ -13,7 +13,7 @@ public class WishListDtoValidator : AbstractValidator<WishListDto>
             .NotEmpty();
         RuleFor(dto => dto.Description)
             .Must(s => s is null || s.Length != 0)
-            .WithErrorCode("NullOrEmptyValidator")
+            .WithErrorCode("NullOrNonEmptyValidator")
             .WithMessage("Description must be null or non-empty");
         RuleForEach(dto => dto.Wishes)
             .SetValidator(wishDtoValidator);

@@ -12,7 +12,7 @@ public class UpdateWishListRequestValidator : AbstractValidator<UpdateWishListRe
             .NotEqual(Guid.Empty);
         RuleFor(request => request.NewDescription)
             .Must(s => s is null || s.Length != 0)
-            .WithErrorCode("NullOrEmptyValidator")
+            .WithErrorCode("NullOrNonEmptyValidator")
             .WithMessage("Description must be null or non-empty");
         RuleFor(request => request.NewName)
             .NotEmpty();
