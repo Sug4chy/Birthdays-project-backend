@@ -1,5 +1,4 @@
 ﻿using Domain.Accessors;
-using Domain.DTO.Responses.Auth;
 using Domain.Exceptions;
 using Domain.Services.Auth;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,7 @@ public class LogoutHandler(
     ICurrentUserAccessor userAccessor,
     ILogger<LogoutHandler> logger)
 {
-    public async Task<LogoutResponse> Handle(CancellationToken ct = default)
+    public async Task Handle(CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
         logger.LogInformation($"Logout request was received for user {currentUser.Email}");
@@ -23,6 +22,5 @@ public class LogoutHandler(
         }
         
         logger.LogInformation($"Logout response was successfully sent for user {currentUser.Email}");
-        return new LogoutResponse();
     }
 }

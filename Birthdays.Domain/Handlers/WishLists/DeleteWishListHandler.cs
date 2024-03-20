@@ -1,5 +1,4 @@
 ﻿using Domain.DTO.Requests.WishLists;
-using Domain.DTO.Responses.WishLists;
 using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.WishLists;
@@ -11,7 +10,7 @@ public class DeleteWishListHandler(
     DeleteWishListRequestValidator validator,
     IWishListService wishListService)
 {
-    public async Task<DeleteWishListResponse> Handle(DeleteWishListRequest request, CancellationToken ct = default)
+    public async Task Handle(DeleteWishListRequest request, CancellationToken ct = default)
     {
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
@@ -21,6 +20,5 @@ public class DeleteWishListHandler(
             WishListsErrors.NoSuchWishListWithId(request.WishListId));
 
         await wishListService.DeleteWishListAsync(wishList!, ct);
-        return new DeleteWishListResponse();
     }
 }
