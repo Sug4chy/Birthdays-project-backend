@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
         CancellationToken ct = default)
         => handler.Handle(request, ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     [HttpPost("logout")]
     public Task<WrapperResponseDto<LogoutResponse>> Logout(
         [FromServices] LogoutHandler handler,

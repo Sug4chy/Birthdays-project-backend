@@ -9,11 +9,11 @@ using Web.Extensions;
 
 namespace Web.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/profiles")]
 public class WishListsController : ControllerBase
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("current/[controller]")]
     public Task<WrapperResponseDto<CreateWishListResponse>> CreateWishList(
         [FromBody] CreateWishListRequest request,
@@ -21,14 +21,12 @@ public class WishListsController : ControllerBase
         CancellationToken ct = default)
         => handler.Handle(request, ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("current/[controller]")]
     public Task<WrapperResponseDto<GetProfileWishListsResponse>> GetCurrentProfileWishLists(
         [FromServices] GetCurrentProfileWishListsHandler handler,
         CancellationToken ct = default)
         => handler.Handle(ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("{userId}/[controller]")]
     public Task<WrapperResponseDto<GetProfileWishListsResponse>> GetProfileWishListsById(
         [FromRoute] string userId,
@@ -37,7 +35,6 @@ public class WishListsController : ControllerBase
         => handler.Handle(new GetProfileWishListsByIdRequest { UserId = userId }, ct)
             .WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("current/[controller]/{wishListId:guid}")]
     public Task<WrapperResponseDto<CreateWishResponse>> CreateWish(
         [FromRoute] Guid wishListId,

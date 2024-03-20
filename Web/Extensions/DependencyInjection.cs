@@ -62,7 +62,8 @@ public static class DependencyInjection
 
     public static AuthenticationBuilder AddConfiguredJwtAuthentication(this IServiceCollection services,
         IConfiguration config)
-        => services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        => services.AddAuthentication(options 
+                => options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 var jwtConfiguration = config.GetSection(JwtConfigurationOptions.Position);
@@ -82,9 +83,16 @@ public static class DependencyInjection
 
     public static IServiceCollection AddAuthorizationWithPolicies(this IServiceCollection services)
     {
-        services.AddAuthorizationBuilder()
-            .AddPolicy("ShouldIncludeGuidInJwt", builder => 
-                builder.Requirements.Add(new GuidClaimRequirement()));
+        services.AddAuthorization(auth =>
+        {
+            auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build());
+            auth.AddPolicy("ShouldIncludeGuidInJwt", policy => 
+                policy.Requirements.Add(new GuidClaimRequirement()));
+            auth.DefaultPolicy = auth.GetPolicy("Bearer")!;
+        });
         services.AddSingleton<IAuthorizationHandler, GuidClaimHandler>();
         return services;
     }

@@ -9,11 +9,11 @@ using Web.Extensions;
 
 namespace Web.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/[controller]")]
 public class ProfilesController : ControllerBase
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("{userId:guid}")]
     public Task<WrapperResponseDto<GetProfileByIdResponse>> GetProfileById(
         [FromRoute] Guid userId,
@@ -25,14 +25,12 @@ public class ProfilesController : ControllerBase
             },
             ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("current")]
     public Task<WrapperResponseDto<GetCurrentProfileResponse>> GetCurrentProfile(
         [FromServices] GetCurrentProfileHandler handler,
         CancellationToken ct = default)
         => handler.Handle(ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("{profileId:guid}/subscribe")]
     public Task<WrapperResponseDto<SubscribeToResponse>> SubscribeTo(
         [FromRoute] Guid profileId,
@@ -44,7 +42,6 @@ public class ProfilesController : ControllerBase
             },
             ct).WrappedWithLinks();
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("{profileId:guid}/unsubscribe")]
     public Task<WrapperResponseDto<UnsubscribeFromResponse>> UnsubscribeFrom(
         [FromRoute] Guid profileId,
