@@ -4,17 +4,21 @@ using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.WishLists;
 using Domain.Validators.WishLists;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Handlers.WishLists;
 
 public class CreateWishHandler(
     ICurrentUserAccessor userAccessor,
     CreateWishRequestValidator validator,
-    IWishListService wishListService)
+    IWishListService wishListService,
+    ILogger<CreateWishHandler> logger)
 {
     public async Task Handle(CreateWishRequest request, CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
+        logger.LogInformation($"{request.GetType().Name} was received " +
+                              $"from user with email {currentUser.Email}.");
 
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
@@ -31,6 +35,8 @@ public class CreateWishHandler(
             };
         }
 
-        await wishListService.CreateWishAsync(request.Wish, wishList, ct);
+        var newWishId = await wishListService.CreateWishAsync(request.Wish, wishList, ct);
+        logger.LogInformation($"User with email {currentUser.Email} successfully " +
+                              $"created wish with id {newWishId}.");
     }
 }

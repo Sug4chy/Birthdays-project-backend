@@ -26,17 +26,19 @@ public class GetProfileByIdHandler(
     public async Task<GetProfileByIdResponse> Handle(GetProfileByIdRequest request,
         CancellationToken ct = default)
     {
-        logger.LogInformation($"GetProfileById request was received for {request.UserId}'s profile");
+        var currentUser = await userAccessor.GetCurrentUserAsync(ct);
+        logger.LogInformation($"{request.GetType().Name} was received for {request.UserId}'s profile " +
+                              $"from user with email {currentUser.Email}.");
+        
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
-
-        var currentUser = await userAccessor.GetCurrentUserAsync(ct);
         
         var user = await userService.GetUserByIdAsync(request.UserId.ToString(), ct);
         NotFoundException.ThrowIfNull(user, UsersErrors.NoSuchUserWithId(request.UserId.ToString()));
         var profile = await profileService.GetProfileByIdAsync(user!.ProfileId, ct);
         
-        logger.LogInformation($"GetProfileByUsernameResponse was successfully sent to {currentUser.Email}");
+        logger.LogInformation($"Profile of user {user.Email} was successfully sent to " +
+                              $"user with email {currentUser.Email}.");
         return new GetProfileByIdResponse
         {
             Name = user.Name,

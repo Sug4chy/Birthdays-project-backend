@@ -20,7 +20,8 @@ public class LoginHandler(
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken ct = default)
     {
-        logger.LogInformation($"Login request from user {request.Email} was received.");
+        logger.LogInformation($"{request.GetType().Name} was received " +
+                              $"from user with email {request.Email}.");
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
 
@@ -36,7 +37,7 @@ public class LoginHandler(
 
         var tokensModel = await authService.GenerateAndSetTokensAsync(user!, ct);
 
-        logger.LogInformation($"Login response was successfully sent for user {request.Email}");
+        logger.LogInformation($"User with email {request.Email} was logged in.");
         return new LoginResponse
         {
             AccessToken = tokensModel.AccessToken,

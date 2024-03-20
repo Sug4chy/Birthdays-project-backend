@@ -16,11 +16,12 @@ public class GetCurrentProfileHandler(
     public async Task<GetCurrentProfileResponse> Handle(CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
-        logger.LogInformation($"GetCurrentProfile request was received from user with id {currentUser.Id}");
+        logger.LogInformation($"GetCurrentProfileRequest was received " +
+                              $"from user with email {currentUser.Email}.");
         
         var profile = await profileService.GetProfileByIdAsync(currentUser.ProfileId, ct);
-        logger.LogInformation("GetCurrentProfile response was successfully sent to user with id " +
-                              $"{currentUser.Id}");
+        logger.LogInformation($"Profile of user with email {currentUser.Email}" +
+                              "was successfully sent to him.");
         return new GetCurrentProfileResponse
         {
             Name = currentUser.Name,
