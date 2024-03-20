@@ -1,21 +1,23 @@
-﻿using Domain.DTO;
-using Domain.DTO.Requests.Auth;
+﻿using Domain.DTO.Requests.Auth;
+using Domain.Validators.Dto;
 using FluentValidation;
 
 namespace Domain.Validators.Auth;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public RegisterRequestValidator()
+    public RegisterRequestValidator(DateDtoValidator dateDtoValidator)
     {
         RuleFor(request => request.Name)
             .NotEmpty();
         RuleFor(request => request.Surname)
             .NotEmpty();
         RuleFor(request => request.Patronymic)
-            .Must(BeNullOrNotEmpty);
+            .Must(s => s is null || s.Length != 0)
+            .WithErrorCode("NullOrEmptyValidator")
+            .WithMessage("Patronymic must be null or non-empty");
         RuleFor(request => request.BirthDate)
-            .Must(BeValidDate);
+            .SetValidator(dateDtoValidator);
         RuleFor(request => request.Email)
             .NotEmpty();
         RuleFor(req => req.Password)
@@ -26,13 +28,4 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .WithErrorCode("NoDigitsValidator")
             .WithMessage("Password must include at least 1 digit");
     }
-
-    private static bool BeValidDate(DateDto date)
-        => date.Year is >= 1 and <= 9999
-           && date.Month is >= 1 and <= 12
-           && date.Day >= 1
-           && date.Day <= DateTime.DaysInMonth(date.Year, date.Month);
-
-    private static bool BeNullOrNotEmpty(string? s)
-        => s is null || s.Length != 0;
 }

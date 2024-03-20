@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Domain.Validators.Dto;
 
-public class WishDtoValidator : AbstractValidator<WishDto>
+public class WishListDtoValidator : AbstractValidator<WishListDto>
 {
-    public WishDtoValidator()
+    public WishListDtoValidator(WishDtoValidator wishDtoValidator)
     {
         RuleFor(dto => dto.Id)
             .Null();
@@ -15,9 +15,7 @@ public class WishDtoValidator : AbstractValidator<WishDto>
             .Must(s => s is null || s.Length != 0)
             .WithErrorCode("NullOrEmptyValidator")
             .WithMessage("Description must be null or non-empty");
-        RuleFor(dto => dto.GiftRef)
-            .Must(s => s is null || s.Length != 0)
-            .WithErrorCode("NullOrEmptyValidator")
-            .WithMessage("GiftRef must be null or non-empty");
+        RuleForEach(dto => dto.Wishes)
+            .SetValidator(wishDtoValidator);
     }
 }

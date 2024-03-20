@@ -28,4 +28,12 @@ public class UserService(AppDbContext context) : IUserService
     public Task<User?> GetUserByIdAsync(string id, CancellationToken ct = default)
         => context.Users
             .FirstOrDefaultAsync(u => u.Id == id, ct);
+
+    public Task<List<User>> GetAllUsersWithPaginationIndexAsync(string currentUserId, int offset, int limit, 
+        CancellationToken ct = default)
+        => context.Users
+            .Where(u => !u.Id.Equals(currentUserId))
+            .Skip(limit * offset)
+            .Take(limit)
+            .ToListAsync(ct);
 }

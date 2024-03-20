@@ -6,11 +6,11 @@ using Domain.Validators.WishLists;
 
 namespace Domain.Handlers.WishLists;
 
-public class DeleteWishListHandler(
-    DeleteWishListRequestValidator validator,
+public class DeleteWishHandler(
+    DeleteWishRequestValidator validator,
     IWishListService wishListService)
 {
-    public async Task Handle(DeleteWishListRequest request, CancellationToken ct = default)
+    public async Task Handle(DeleteWishRequest request, CancellationToken ct = default)
     {
         var validationResult = await validator.ValidateAsync(request, ct);
         BadRequestException.ThrowByValidationResult(validationResult);
@@ -19,6 +19,9 @@ public class DeleteWishListHandler(
         NotFoundException.ThrowIfNull(wishList, 
             WishListsErrors.NoSuchWishListWithId(request.WishListId));
 
-        await wishListService.DeleteWishListAsync(wishList!, ct);
+        var wish = wishList!.Wishes!.FirstOrDefault(w => w.Id == request.WishId);
+        NotFoundException.ThrowIfNull(wish, WishListsErrors.NoSuchWishWithId(request.WishId));
+
+        await wishListService.DeleteWishAsync(wish!, ct);
     }
 }

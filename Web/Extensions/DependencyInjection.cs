@@ -4,9 +4,12 @@ using Data.Entities;
 using Domain.Configs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Web.Authorization.Handlers;
+using Web.Authorization.Requirements;
 
 namespace Web.Extensions;
 
@@ -59,7 +62,8 @@ public static class DependencyInjection
 
     public static AuthenticationBuilder AddConfiguredJwtAuthentication(this IServiceCollection services,
         IConfiguration config)
-        => services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        => services.AddAuthentication(options 
+                => options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 var jwtConfiguration = config.GetSection(JwtConfigurationOptions.Position);
@@ -76,4 +80,20 @@ public static class DependencyInjection
                     ValidateIssuerSigningKey = true
                 };
             });
+
+    public static IServiceCollection AddAuthorizationWithPolicies(this IServiceCollection services)
+    {
+        services.AddAuthorization(auth =>
+        {
+            auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build());
+            auth.AddPolicy("ShouldIncludeGuidInJwt", policy => 
+                policy.Requirements.Add(new GuidClaimRequirement()));
+            auth.DefaultPolicy = auth.GetPolicy("Bearer")!;
+        });
+        services.AddSingleton<IAuthorizationHandler, GuidClaimHandler>();
+        return services;
+    }
 }

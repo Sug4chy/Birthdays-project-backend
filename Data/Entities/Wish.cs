@@ -5,7 +5,7 @@ namespace Data.Entities;
 public class Wish : AuditableEntity
 {
     public Guid Id { get; set; }
-    public required string Name { get; init; }
+    public required string Name { get; set; }
     public required Guid WishListId { get; set; }
     public WishList? WishList { get; set; }
     public Guid? ImageId { get; set; }

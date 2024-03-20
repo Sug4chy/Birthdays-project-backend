@@ -1,6 +1,5 @@
 ﻿using Domain.Accessors;
 using Domain.DTO.Requests.Profiles;
-using Domain.DTO.Responses.Profiles;
 using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.Profiles;
@@ -15,7 +14,7 @@ public class UnsubscribeFromHandler(
     IProfileService profileService,
     ISubscriptionsService subscriptionsService)
 {
-    public async Task<UnsubscribeFromResponse> Handle(UnsubscribeFromRequest request, 
+    public async Task Handle(UnsubscribeFromRequest request, 
         CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
@@ -40,7 +39,5 @@ public class UnsubscribeFromHandler(
                 Error = unsubscribeResult.Error
             };
         }
-
-        return new UnsubscribeFromResponse();
     }
 }

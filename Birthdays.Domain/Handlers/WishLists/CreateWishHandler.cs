@@ -1,6 +1,5 @@
 ﻿using Domain.Accessors;
 using Domain.DTO.Requests.WishLists;
-using Domain.DTO.Responses.WishLists;
 using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.WishLists;
@@ -13,7 +12,7 @@ public class CreateWishHandler(
     CreateWishRequestValidator validator,
     IWishListService wishListService)
 {
-    public async Task<CreateWishResponse> Handle(CreateWishRequest request, CancellationToken ct = default)
+    public async Task Handle(CreateWishRequest request, CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
 
@@ -33,6 +32,5 @@ public class CreateWishHandler(
         }
 
         await wishListService.CreateWishAsync(request.Wish, wishList, ct);
-        return new CreateWishResponse();
     }
 }

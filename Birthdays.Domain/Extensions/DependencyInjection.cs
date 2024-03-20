@@ -9,6 +9,7 @@ using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Services.WishLists;
 using Domain.Validators.Auth;
+using Domain.Validators.Dto;
 using Domain.Validators.Profiles;
 using Domain.Validators.WishLists;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ public static class DependencyInjection
         services.AddScoped<GetCurrentProfileHandler>();
         services.AddScoped<SubscribeToHandler>();
         services.AddScoped<UnsubscribeFromHandler>();
+        services.AddScoped<GetProfilesByPageIndexHandler>();
 
         //WishList handlers
         services.AddScoped<CreateWishListHandler>();
@@ -39,6 +41,8 @@ public static class DependencyInjection
         services.AddScoped<CreateWishHandler>();
         services.AddScoped<UpdateWishListHandler>();
         services.AddScoped<DeleteWishListHandler>();
+        services.AddScoped<UpdateWishHandler>();
+        services.AddScoped<DeleteWishHandler>();
         
         return services;
     }
@@ -65,6 +69,7 @@ public static class DependencyInjection
         services.AddScoped<GetProfileByIdRequestValidator>();
         services.AddScoped<SubscribeToRequestValidator>();
         services.AddScoped<UnsubscribeFromRequestValidator>();
+        services.AddScoped<GetProfilesByPageIndexRequestValidator>();
 
         //WishList validators
         services.AddScoped<CreateWishListRequestValidator>();
@@ -72,6 +77,14 @@ public static class DependencyInjection
         services.AddScoped<CreateWishRequestValidator>();
         services.AddScoped<UpdateWishListRequestValidator>();
         services.AddScoped<DeleteWishListRequestValidator>();
+        services.AddScoped<UpdateWishRequestValidator>();
+        services.AddScoped<DeleteWishRequestValidator>();
+
+        //Dto validators
+        services.AddScoped<WishListDtoValidator>();
+        services.AddScoped<WishDtoValidator>();
+        services.AddScoped<DateDtoValidator>();
+        
         return services;
     }
 

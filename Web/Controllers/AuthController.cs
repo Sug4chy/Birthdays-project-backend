@@ -1,11 +1,8 @@
 ﻿using Domain.DTO.Requests.Auth;
-using Domain.DTO.Responses;
 using Domain.DTO.Responses.Auth;
 using Domain.Handlers.Auth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Extensions;
 
 namespace Web.Controllers;
 
@@ -14,30 +11,30 @@ namespace Web.Controllers;
 public class AuthController : ControllerBase
 {
     [HttpPost("register")]
-    public Task<WrapperResponseDto<RegisterResponse>> Register(
+    public Task<RegisterResponse> Register(
         [FromBody] RegisterRequest request,
         [FromServices] RegisterHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request, ct).WrappedWithLinks();
+        => handler.Handle(request, ct);
 
     [HttpPost("login")]
-    public Task<WrapperResponseDto<LoginResponse>> Login(
+    public Task<LoginResponse> Login(
         [FromBody] LoginRequest request,
         [FromServices] LoginHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request, ct).WrappedWithLinks();
+        => handler.Handle(request, ct);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     [HttpPost("logout")]
-    public Task<WrapperResponseDto<LogoutResponse>> Logout(
+    public Task Logout(
         [FromServices] LogoutHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(ct).WrappedWithLinks();
+        => handler.Handle(ct);
 
     [HttpPost("refresh")]
-    public Task<WrapperResponseDto<RefreshResponse>> Refresh(
+    public Task<RefreshResponse> Refresh(
         [FromBody] RefreshRequest request,
         [FromServices] RefreshHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request, ct).WrappedWithLinks();
+        => handler.Handle(request, ct);
 }

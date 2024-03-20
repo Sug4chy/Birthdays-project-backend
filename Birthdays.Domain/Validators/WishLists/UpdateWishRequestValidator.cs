@@ -4,11 +4,14 @@ using FluentValidation;
 
 namespace Domain.Validators.WishLists;
 
-public class CreateWishRequestValidator : AbstractValidator<CreateWishRequest>
+public class UpdateWishRequestValidator : AbstractValidator<UpdateWishRequest>
 {
-    public CreateWishRequestValidator(WishDtoValidator wishDtoValidator)
+    public UpdateWishRequestValidator(WishDtoValidator wishDtoValidator)
     {
         RuleFor(request => request.WishListId)
+            .NotNull()
+            .NotEqual(Guid.Empty);
+        RuleFor(request => request.WishId)
             .NotNull()
             .NotEqual(Guid.Empty);
         RuleFor(request => request.Wish)

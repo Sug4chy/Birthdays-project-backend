@@ -1,68 +1,82 @@
 ﻿using Domain.DTO.Requests.WishLists;
-using Domain.DTO.Responses;
 using Domain.DTO.Responses.WishLists;
 using Domain.Handlers.WishLists;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Extensions;
 
 namespace Web.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/profiles")]
 public class WishListsController : ControllerBase
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("current/[controller]")]
-    public Task<WrapperResponseDto<CreateWishListResponse>> CreateWishList(
+    public Task CreateWishList(
         [FromBody] CreateWishListRequest request,
         [FromServices] CreateWishListHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request, ct).WrappedWithLinks();
+        => handler.Handle(request, ct);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("current/[controller]")]
-    public Task<WrapperResponseDto<GetProfileWishListsResponse>> GetCurrentProfileWishLists(
+    public Task<GetProfileWishListsResponse> GetCurrentProfileWishLists(
         [FromServices] GetCurrentProfileWishListsHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(ct).WrappedWithLinks();
+        => handler.Handle(ct);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("{userId}/[controller]")]
-    public Task<WrapperResponseDto<GetProfileWishListsResponse>> GetProfileWishListsById(
+    public Task<GetProfileWishListsResponse> GetProfileWishListsById(
         [FromRoute] string userId,
         [FromServices] GetProfileWishListsByIdHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(new GetProfileWishListsByIdRequest { UserId = userId }, ct)
-            .WrappedWithLinks();
+        => handler.Handle(new GetProfileWishListsByIdRequest { UserId = userId }, ct);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("current/[controller]/{wishListId}")]
-    public Task<WrapperResponseDto<CreateWishResponse>> CreateWish(
+    [HttpPost("current/[controller]/{wishListId:guid}")]
+    public Task CreateWish(
         [FromRoute] Guid wishListId,
         [FromBody] CreateWishRequest request,
         [FromServices] CreateWishHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request with { WishListId = wishListId }, ct)
-            .WrappedWithLinks();
+        => handler.Handle(request with { WishListId = wishListId }, ct);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPut("current/[controller]/{wishListId}")]
-    public Task<WrapperResponseDto<UpdateWishListResponse>> UpdateWishList(
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPut("current/[controller]/{wishListId:guid}")]
+    public Task UpdateWishList(
         [FromRoute] Guid wishListId,
         [FromBody] UpdateWishListRequest request,
         [FromServices] UpdateWishListHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(request with { WishListId = wishListId }, ct)
-            .WrappedWithLinks();
+        => handler.Handle(request with { WishListId = wishListId }, ct);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpDelete("current/[controller]/{wishListId}")]
-    public Task<WrapperResponseDto<DeleteWishListResponse>> DeleteWishList(
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpDelete("current/[controller]/{wishListId:guid}")]
+    public Task DeleteWishList(
         [FromRoute] Guid wishListId,
         [FromServices] DeleteWishListHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(new DeleteWishListRequest { WishListId = wishListId }, ct)
-            .WrappedWithLinks();
+        => handler.Handle(new DeleteWishListRequest { WishListId = wishListId }, ct);
+
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPut("current/[controller]/{wishListId:guid}/wishes/{wishId:guid}")]
+    public Task UpdateWish(
+        [FromRoute] Guid wishListId,
+        [FromRoute] Guid wishId,
+        [FromBody] UpdateWishRequest request,
+        [FromServices] UpdateWishHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(request with { WishListId = wishListId, WishId = wishId }, ct);
+
+    [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpDelete("current/[controller]/{wishListId:guid}/wishes/{wishId:guid}")]
+    public Task DeleteWish(
+        [FromRoute] Guid wishListId,
+        [FromRoute] Guid wishId,
+        [FromServices] DeleteWishHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(new DeleteWishRequest
+            {
+                WishListId = wishListId,
+                WishId = wishId
+            }, ct);
 }

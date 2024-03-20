@@ -1,6 +1,5 @@
 ﻿using Domain.Accessors;
 using Domain.DTO.Requests.WishLists;
-using Domain.DTO.Responses.WishLists;
 using Domain.Exceptions;
 using Domain.Results;
 using Domain.Services.Profiles;
@@ -17,7 +16,7 @@ public class CreateWishListHandler(
     IWishListService wishListService,
     ILogger<CreateWishListHandler> logger)
 {
-    public async Task<CreateWishListResponse> Handle(CreateWishListRequest request,
+    public async Task Handle(CreateWishListRequest request,
         CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
@@ -31,6 +30,5 @@ public class CreateWishListHandler(
 
         await wishListService.CreateWishListAsync(request.WishList, profile!, ct);
         logger.LogInformation($"CreateWishList response was successfully sent to {currentUser.Email} user");
-        return new CreateWishListResponse();
     }
 }

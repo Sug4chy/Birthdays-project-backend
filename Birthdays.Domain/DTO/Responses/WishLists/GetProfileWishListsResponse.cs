@@ -1,6 +1,6 @@
 ﻿namespace Domain.DTO.Responses.WishLists;
 
-public record GetProfileWishListsResponse : IResponse
+public record GetProfileWishListsResponse
 {
     public required WishListDto[] WishLists { get; init; }
 }

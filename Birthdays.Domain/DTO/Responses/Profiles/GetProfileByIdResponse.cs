@@ -1,6 +1,6 @@
 ﻿namespace Domain.DTO.Responses.Profiles;
 
-public record GetProfileByIdResponse : IResponse
+public record GetProfileByIdResponse
 {
     public required string Name { get; init; }
     public required string Surname { get; init; }
