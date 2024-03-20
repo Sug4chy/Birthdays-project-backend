@@ -5,13 +5,14 @@ namespace Domain.Services.Users;
 
 public interface IUserService
 {
-    Task<User> CreateUserAsync(RegisterRequest request, 
+    Task<User> CreateUserAsync(RegisterRequest request,
         Profile profile, CancellationToken ct = default);
 
-    Task<User?> GetUserByEmailAsync(string email, 
+    Task<User?> GetUserByEmailAsync(string email,
         CancellationToken ct = default);
 
     Task<User?> GetUserByIdAsync(string id, CancellationToken ct = default);
 
-    Task<List<User>> GetAllUsersAsync(CancellationToken ct = default);
+    Task<List<User>> GetAllUsersWithPaginationIndexAsync(string currentUserId, int offset, int limit,
+        CancellationToken ct = default);
 }

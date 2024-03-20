@@ -32,7 +32,7 @@ public static class DependencyInjection
         services.AddScoped<GetCurrentProfileHandler>();
         services.AddScoped<SubscribeToHandler>();
         services.AddScoped<UnsubscribeFromHandler>();
-        services.AddScoped<GetAllProfilesHandler>();
+        services.AddScoped<GetProfilesByPageIndexHandler>();
 
         //WishList handlers
         services.AddScoped<CreateWishListHandler>();
@@ -69,6 +69,7 @@ public static class DependencyInjection
         services.AddScoped<GetProfileByIdRequestValidator>();
         services.AddScoped<SubscribeToRequestValidator>();
         services.AddScoped<UnsubscribeFromRequestValidator>();
+        services.AddScoped<GetProfilesByPageIndexRequestValidator>();
 
         //WishList validators
         services.AddScoped<CreateWishListRequestValidator>();

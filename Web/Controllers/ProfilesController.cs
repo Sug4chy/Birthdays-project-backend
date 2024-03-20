@@ -58,8 +58,10 @@ public class ProfilesController : ControllerBase
 
     [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
-    public Task<WrapperResponseDto<GetAllProfilesResponse>> GetAllProfiles(
-        [FromServices] GetAllProfilesHandler handler,
+    public Task<WrapperResponseDto<GetProfilesByPageIndexResponse>> GetProfilesByPageIndex(
+        [FromQuery] GetProfilesByPageIndexRequest request,
+        [FromServices] GetProfilesByPageIndexHandler handler,
         CancellationToken ct = default)
-        => handler.Handle(ct).WrappedWithLinks();
+        => handler.Handle(request, ct)
+            .WrappedWithLinks();
 }

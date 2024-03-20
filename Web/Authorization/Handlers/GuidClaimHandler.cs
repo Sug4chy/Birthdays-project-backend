@@ -20,8 +20,10 @@ public class GuidClaimHandler : AuthorizationHandler<GuidClaimRequirement>
             };
         if (!Guid.TryParse(claim.Value, out _))
         {
-            context.Fail();
-            return Task.CompletedTask;
+            throw new UnauthorizedException
+            {
+                Error = AuthErrors.DoesNotIncludeClaim(ClaimTypes.NameIdentifier)
+            };
         }
         
         context.Succeed(requirement);
