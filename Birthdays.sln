@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Birthdays.Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Birthdays.Domain", "Birthdays.Domain\Birthdays.Domain.csproj", "{4462BBEE-FC45-4158-A32F-BDC83EC39152}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Birthdays.TgBot", "Birthdays.TgBot\Birthdays.TgBot.csproj", "{13E90448-9B9C-4ED4-AD72-3B886A3427B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{4462BBEE-FC45-4158-A32F-BDC83EC39152}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4462BBEE-FC45-4158-A32F-BDC83EC39152}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4462BBEE-FC45-4158-A32F-BDC83EC39152}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E90448-9B9C-4ED4-AD72-3B886A3427B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E90448-9B9C-4ED4-AD72-3B886A3427B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E90448-9B9C-4ED4-AD72-3B886A3427B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E90448-9B9C-4ED4-AD72-3B886A3427B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
