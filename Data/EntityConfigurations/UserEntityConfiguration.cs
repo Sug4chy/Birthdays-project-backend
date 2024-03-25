@@ -12,6 +12,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasKey(u => u.Id);
         builder.HasAlternateKey(u => u.Email);
+        builder.HasIndex(u => u.TelegramChatId).IsUnique();
 
         builder.HasOne(u => u.Profile)
             .WithOne(p => p.User)

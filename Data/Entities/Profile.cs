@@ -13,6 +13,5 @@ public class Profile
     public User? User { get; set; }
     public ICollection<Subscription>? SubscriptionsAsBirthdayMan { get; set; }
     public ICollection<Subscription>? SubscriptionsAsSubscriber { get; set; }
-    public ICollection<Chat>? Chats { get; set; }
     public ICollection<WishList>? WishLists { get; set; }
 }

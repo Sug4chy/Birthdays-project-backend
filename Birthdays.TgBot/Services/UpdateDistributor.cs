@@ -1,8 +1,11 @@
-﻿using Telegram.Bot.Types;
+﻿using Birthdays.TgBot.Services.ServiceManager;
+using Telegram.Bot.Types;
 
 namespace Birthdays.TgBot.Services;
 
-public class UpdateDistributor<T>(Bot.Bot bot) where T : ITelegramUpdateListener, new()
+public class UpdateDistributor<T>(
+    Bot.Bot bot, 
+    IServiceManager serviceManager) where T : ITelegramUpdateListener, new()
 {
     private readonly Dictionary<long, T> _listeners = new();
 
@@ -14,7 +17,8 @@ public class UpdateDistributor<T>(Bot.Bot bot) where T : ITelegramUpdateListener
         {
             listener = new T
             {
-                Client = bot.Client
+                Client = bot.Client,
+                ServiceManager = serviceManager
             };
             _listeners.Add(chatId, listener);
         }

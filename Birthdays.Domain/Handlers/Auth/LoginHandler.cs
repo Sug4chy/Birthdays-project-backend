@@ -5,6 +5,7 @@ using Domain.Exceptions;
 using Domain.Models;
 using Domain.Results;
 using Domain.Services.Auth;
+using Domain.Services.Telegram;
 using Domain.Services.Users;
 using Domain.Validators.Auth;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ public class LoginHandler(
     IAuthService authService,
     IMapper mapper,
     IUserService userService,
+    ITelegramService telegramService,
     ILogger<LoginHandler> logger)
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken ct = default)
@@ -41,7 +43,8 @@ public class LoginHandler(
         return new LoginResponse
         {
             AccessToken = tokensModel.AccessToken,
-            RefreshToken = tokensModel.RefreshToken
+            RefreshToken = tokensModel.RefreshToken,
+            TgBotLink = telegramService.GenerateLinkForUser(user!)
         };
     }
 }
