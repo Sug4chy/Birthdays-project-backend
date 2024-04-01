@@ -1,7 +1,9 @@
-﻿using Domain.Services.Telegram;
+﻿using Birthdays.TgBot.Exceptions;
+using Domain.Services.Telegram;
 using Domain.Services.Users;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Birthdays.TgBot.Commands;
 
@@ -11,44 +13,53 @@ public class StartCommand(
     ITelegramService telegramService) : IBotCommand
 {
     public string Name => "/start";
-    
+
+    private static readonly string[] ErrorTexts =
+    [
+        "Вижу, вы сюда попали случайно. Пожалуйста, зарегистрируйтесь",
+        "Такие фокусы здесь не пройдут, авторизуйся всё же на нашем сайте",
+        "Так, а тебя нет в БД. Ты точно зарегистрировался на сайте!?"
+    ];
+
+    private enum Error
+    {
+        NoUniqueCode,
+        UniqueCodeIsNotGuid,
+        NoUserWithThatId
+    }
+
     public async Task ExecuteAsync(Update update, CancellationToken ct = default)
     {
         long chatId = update.Message!.Chat.Id;
         string[] messageParts = update.Message.Text!.Split(' ');
-        if (messageParts.Length == 1)
-        {
-            await client.SendTextMessageAsync(chatId, "Друг, ну ты ключ-то где потерял?", 
-                cancellationToken: ct);
-            return;
-        }
+        TgBotException.ThrowIf(messageParts.Length == 1, ErrorTexts[(int)Error.NoUniqueCode]);
 
         string uniqueCode = messageParts[1];
-        if (!Guid.TryParse(uniqueCode, out _))
-        {
-            await client.SendTextMessageAsync(chatId, "Невалидный у тебя код, дружочек", 
-                cancellationToken: ct);
-            return;
-        }
+        TgBotException.ThrowIf(!Guid.TryParse(uniqueCode, out _), ErrorTexts[(int)Error.UniqueCodeIsNotGuid]);
 
         var user = await userService.GetUserByIdAsync(uniqueCode, ct);
-        if (user is null)
-        {
-            await client.SendTextMessageAsync(chatId, "Лол", cancellationToken: ct);
-            return;
-        }
+        TgBotException.ThrowIf(user is null, ErrorTexts[(int)Error.NoUserWithThatId]);
 
-        if (user.TelegramChatId != 0)
+        if (user!.TelegramChatId != 0)
         {
+            var keyboard = new ReplyKeyboardMarkup(
+                [
+                    [
+                        new KeyboardButton("Аоа оао кнопка")
+                    ]
+                ]);
             await client.SendTextMessageAsync(chatId,
-                $"Ну здравствуй {user.Name}, будь как дома.", 
-                cancellationToken: ct);
+                $"Здравствуйте, {user.UserName}! Вас приветствует бот проекта \"Тинькофф Именины\". " +
+                "Пожалуйста, выберите команду в меню, и я дам вам то, что вы запросили",
+                replyMarkup: keyboard, cancellationToken: ct);
             return;
         }
 
         await telegramService.SetChatIdToUserAsync(user, chatId, ct);
         await client.SendTextMessageAsync(chatId,
-            $"Ну здравствуй дорогой, будь как дома. Кстати, твой ключ: {uniqueCode}", 
+            $"Поздравляю с успешной регистрацией на нашем сайте, {user.UserName}! " +
+            "Вас приветствует бот проекта \"Тинькофф Именины\". " +
+            "Пожалуйста, выберите команду в меню, и я дам вам то, что вы запросили",
             cancellationToken: ct);
     }
 }
