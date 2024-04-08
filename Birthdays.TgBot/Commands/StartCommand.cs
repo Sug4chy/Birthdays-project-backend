@@ -28,7 +28,7 @@ public class StartCommand(
         NoUserWithThatId
     }
 
-    private ReplyKeyboardMarkup KeyboardMarkup =>
+    private static ReplyKeyboardMarkup KeyboardMarkup =>
         new(
         [
             [

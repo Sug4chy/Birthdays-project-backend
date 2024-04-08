@@ -17,4 +17,5 @@ public interface IUserService
         CancellationToken ct = default);
 
     Task<User?> GetUserByTelegramChatIdAsync(long chatId, CancellationToken ct = default);
+    Task<User?> GetUserWithProfileByTelegramChatIdAsync(long chatId, CancellationToken ct = default);
 }

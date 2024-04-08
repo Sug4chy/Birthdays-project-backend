@@ -10,7 +10,9 @@ public class CommandExecutor : ITelegramUpdateListener
     private IEnumerable<IBotCommand> Commands =>
     [
         new StartCommand(Client!, ServiceManager!.UserService, ServiceManager!.TelegramService),
-        new MenuCommand(Client!)
+        new MenuCommand(Client!),
+        new MenuSubCommand(Client!),
+        new MySubscriptionsCommand(Client!, ServiceManager!.UserService, ServiceManager!.SubscriptionsService)
     ];
 
     public ITelegramBotClient? Client { get; set; }

@@ -2,6 +2,7 @@ using Birthdays.TgBot.Bot;
 using Birthdays.TgBot.Services;
 using Birthdays.TgBot.Services.ServiceManager;
 using Data.Extensions;
+using Domain.Services.Subscriptions;
 using Domain.Services.Telegram;
 using Domain.Services.Users;
 
@@ -11,6 +12,7 @@ builder.Services.Configure<BotConfigOptions>(builder.Configuration.GetSection("B
 builder.Services.AddSingleton<Bot>();
 
 builder.Services.AddDataLayerServices(builder.Configuration);
+builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITelegramService, TelegramService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();

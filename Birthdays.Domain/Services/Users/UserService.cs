@@ -40,4 +40,9 @@ public class UserService(AppDbContext context) : IUserService
     public Task<User?> GetUserByTelegramChatIdAsync(long chatId, CancellationToken ct = default)
         => context.Users
             .FirstOrDefaultAsync(u => u.TelegramChatId == chatId, ct);
+
+    public Task<User?> GetUserWithProfileByTelegramChatIdAsync(long chatId, CancellationToken ct = default)
+        => context.Users
+            .Include(u => u.Profile)
+            .FirstOrDefaultAsync(u => u.TelegramChatId == chatId, ct);
 }
