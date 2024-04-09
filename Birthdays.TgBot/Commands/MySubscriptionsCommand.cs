@@ -5,6 +5,7 @@ using Domain.Services.Users;
 using Microsoft.IdentityModel.Tokens;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Birthdays.TgBot.Commands;
 
@@ -27,6 +28,14 @@ public class MySubscriptionsCommand(
         NoSubscriptions
     }
 
+    private static readonly IReplyMarkup Keyboard = new InlineKeyboardMarkup(
+    [
+        [
+            new InlineKeyboardButton("Предыдущая страница") { CallbackData = "subscriptions" },
+            new InlineKeyboardButton("Следующая страница") { CallbackData = "subscriptions 1" }
+        ]
+    ]);
+
     public async Task ExecuteAsync(Update update, CancellationToken ct = default)
     {
         if (update.Message is null)
@@ -46,14 +55,15 @@ public class MySubscriptionsCommand(
         for (int i = 0; i < subscriptions.Length; i++)
         {
             var tempUser = subscriptions[i].BirthdayMan!.User!;
-            string patronymic = tempUser.Patronymic is null 
-                ? $" {tempUser.Patronymic}" 
+            string patronymic = tempUser.Patronymic is null
+                ? $" {tempUser.Patronymic}"
                 : "";
             sb.AppendLine($"{i + 1}) {tempUser.Name}" +
                           $" {tempUser.Name}{patronymic}: " +
                           $"{tempUser.BirthDate.ToShortDateString()}");
         }
 
-        await client.SendTextMessageAsync(chatId, sb.ToString(), cancellationToken: ct);
+        await client.SendTextMessageAsync(chatId, sb.ToString(), 
+            replyMarkup: Keyboard, cancellationToken: ct);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Birthdays.TgBot.Services.ServiceManager;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace Birthdays.TgBot.Services;
 
@@ -11,7 +12,9 @@ public class UpdateDistributor<T>(
 
     public async Task GetUpdateAsync(Update update, CancellationToken ct = default)
     {
-        long chatId = update.Message!.Chat.Id;
+        long chatId = update.Type == UpdateType.CallbackQuery 
+            ? update.CallbackQuery!.Message!.Chat.Id
+            : update.Message!.Chat.Id;
         var listener = _listeners.GetValueOrDefault(chatId);
         if (listener is null)
         {
