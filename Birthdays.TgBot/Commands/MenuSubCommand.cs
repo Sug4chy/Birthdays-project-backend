@@ -4,10 +4,11 @@ using Telegram.Bot.Types;
 namespace Birthdays.TgBot.Commands;
 
 public class MenuSubCommand(
-    ITelegramBotClient client) : IBotCommand
+    Bot.Bot bot) : IBotCommand
 {
     public string Name => "/menu";
+    public ITelegramBotClient Client { get; } = bot.Client;
 
     public Task ExecuteAsync(Update update, CancellationToken ct = default)
-        => new MenuCommand(client).ExecuteAsync(update, ct);
+        => new MenuCommand(bot).ExecuteAsync(update, ct);
 }

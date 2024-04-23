@@ -10,11 +10,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Birthdays.TgBot.Commands;
 
 public class MySubscriptionsCommand(
-    ITelegramBotClient client,
+    Bot.Bot bot,
     IUserService userService,
     ISubscriptionsService subscriptionsService) : IBotCommand
 {
     public string Name => "Мои подписки";
+    public ITelegramBotClient Client { get; } = bot.Client;
 
     private static readonly string[] ErrorMessages =
     [
@@ -63,7 +64,7 @@ public class MySubscriptionsCommand(
                           $"{tempUser.BirthDate.ToShortDateString()}");
         }
 
-        await client.SendTextMessageAsync(chatId, sb.ToString(), 
+        await Client.SendTextMessageAsync(chatId, sb.ToString(), 
             replyMarkup: Keyboard, cancellationToken: ct);
     }
 }

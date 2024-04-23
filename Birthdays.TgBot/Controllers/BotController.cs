@@ -7,7 +7,7 @@ namespace Birthdays.TgBot.Controllers;
 
 [ApiController]
 [Route("/")]
-public class BotController(UpdateDistributor<CommandExecutor> updateDistributor) : ControllerBase
+public class BotController(UpdateDistributor updateDistributor) : ControllerBase
 {
     [HttpPost]
     public async Task Update(Update update, CancellationToken ct = default)

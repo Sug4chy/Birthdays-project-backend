@@ -8,11 +8,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Birthdays.TgBot.Commands;
 
 public class StartCommand(
-    ITelegramBotClient client,
+    Bot.Bot bot,
     IUserService userService,
     ITelegramService telegramService) : IBotCommand
 {
     public string Name => "/start";
+    public ITelegramBotClient Client { get; } = bot.Client;
 
     private static readonly string[] ErrorTexts =
     [
@@ -45,7 +46,7 @@ public class StartCommand(
         var user = await userService.GetUserByTelegramChatIdAsync(chatId, ct);
         if (user is not null)
         {
-            await client.SendTextMessageAsync(chatId,
+            await Client.SendTextMessageAsync(chatId,
                 $"Здравствуйте, {user.UserName}! Вас приветствует бот проекта \"Тинькофф Именины\". " +
                 "Пожалуйста, выберите команду в меню, и я дам вам то, что вы запросили",
                 replyMarkup: KeyboardMarkup, cancellationToken: ct);
@@ -63,7 +64,7 @@ public class StartCommand(
             TgBotException.ThrowIf(user is null, ErrorTexts[(int)Error.NoUserWithThatId]);
             
             await telegramService.SetChatIdToUserAsync(user!, chatId, ct);
-            await client.SendTextMessageAsync(chatId,
+            await Client.SendTextMessageAsync(chatId,
                 $"Поздравляю с успешной регистрацией на нашем сайте, {user!.UserName}! " +
                 "Вас приветствует бот проекта \"Тинькофф Именины\". " +
                 "Пожалуйста, выберите команду в меню, и я дам вам то, что вы запросили",

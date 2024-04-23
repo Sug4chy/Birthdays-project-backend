@@ -10,7 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Birthdays.TgBot.CallbackHandlers;
 
 public class SubscriptionsPaginationCallbackHandler(
-    ITelegramBotClient client,
+    Bot.Bot bot,
     IUserService userService,
     ISubscriptionsService subscriptionsService) : ICallbackHandler
 {
@@ -46,8 +46,8 @@ public class SubscriptionsPaginationCallbackHandler(
         var keyboard = GenerateKeyboard(pageIndex);
         if (subscriptions.IsNullOrEmpty())
         {
-            await client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
-            await client.SendTextMessageAsync(chatId, "Эта страница пуста! " +
+            await bot.Client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
+            await bot.Client.SendTextMessageAsync(chatId, "Эта страница пуста! " +
                                                       "Пожалуйста, вернитесь на предыдущую",
                 replyMarkup: keyboard, cancellationToken: ct);
             return;
@@ -65,14 +65,14 @@ public class SubscriptionsPaginationCallbackHandler(
                           $"{tempUser.BirthDate.ToShortDateString()}");
         }
         
-        await client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
-        await client.SendTextMessageAsync(chatId, sb.ToString(),
+        await bot.Client.SendTextMessageAsync(chatId, sb.ToString(),
             replyMarkup: keyboard, cancellationToken: ct);
+        await bot.Client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
     }
 
     private static InlineKeyboardMarkup GenerateKeyboard(int pageIndex)
     {
-        string prevIndex = pageIndex == 1 ? "" : $" {pageIndex - 1}";
+        string prevIndex = pageIndex <= 1 ? "" : $" {pageIndex - 1}";
         string nextIndex = $" {pageIndex + 1}";
         return new InlineKeyboardMarkup(
         [

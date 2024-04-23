@@ -5,10 +5,11 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Birthdays.TgBot.Commands;
 
 public class MenuCommand(
-    ITelegramBotClient client) : IBotCommand
+    Bot.Bot bot) : IBotCommand
 {
     public string Name => "Перейти в меню";
-    
+    public ITelegramBotClient Client { get; } = bot.Client;
+
     private static ReplyKeyboardMarkup KeyboardMarkup =>
         new(
         [
@@ -31,7 +32,7 @@ public class MenuCommand(
                             Для выполнения этих операций вы можете воспользоваться кнопками, которые расположены на вашей клавиатуре.
                             Если захотите вернуться сюда, пропишите команду /menu.
                             """;
-        await client.SendTextMessageAsync(update.Message!.Chat.Id, text,
+        await Client.SendTextMessageAsync(update.Message!.Chat.Id, text,
             replyMarkup: KeyboardMarkup, cancellationToken: ct);
     }
 }

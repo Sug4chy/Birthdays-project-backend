@@ -1,6 +1,6 @@
 using Birthdays.TgBot.Bot;
+using Birthdays.TgBot.Extensions;
 using Birthdays.TgBot.Services;
-using Birthdays.TgBot.Services.ServiceManager;
 using Data.Extensions;
 using Domain.Services.Subscriptions;
 using Domain.Services.Telegram;
@@ -15,8 +15,11 @@ builder.Services.AddDataLayerServices(builder.Configuration);
 builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITelegramService, TelegramService>();
-builder.Services.AddScoped<IServiceManager, ServiceManager>();
-builder.Services.AddScoped<UpdateDistributor<CommandExecutor>>();
+
+builder.Services.AddBotCommands();
+builder.Services.AddCallbackHandlers();
+
+builder.Services.AddScoped<UpdateDistributor>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
