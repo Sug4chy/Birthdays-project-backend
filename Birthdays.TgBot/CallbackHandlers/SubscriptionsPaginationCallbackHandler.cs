@@ -43,17 +43,17 @@ public class SubscriptionsPaginationCallbackHandler(
             .GetSubscriptionsByProfileIdWithPaginationAsync(user!.ProfileId, pageIndex, ct);
         TgBotException.ThrowIf(subscriptions.IsNullOrEmpty() && pageIndex == 0, 
             ErrorMessages[(int)Errors.NoSubscriptions]);
-        var keyboard = GenerateKeyboard(pageIndex);
         if (subscriptions.IsNullOrEmpty())
         {
-            await bot.Client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
             await bot.Client.SendTextMessageAsync(chatId, "Эта страница пуста! " +
                                                       "Пожалуйста, вернитесь на предыдущую",
-                replyMarkup: keyboard, cancellationToken: ct);
+                replyMarkup: GenerateKeyboard(pageIndex, []), cancellationToken: ct);
+            await bot.Client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
             return;
         }
 
         var sb = new StringBuilder();
+        var buttons = new List<InlineKeyboardButton>();
         for (int i = 0; i < subscriptions.Length; i++)
         {
             var tempUser = subscriptions[i].BirthdayMan!.User!;
@@ -63,25 +63,43 @@ public class SubscriptionsPaginationCallbackHandler(
             sb.AppendLine($"{i + 1}) {tempUser.Name}" +
                           $" {tempUser.Name}{patronymic}: " +
                           $"{tempUser.BirthDate.ToShortDateString()}");
+            buttons.Add(new InlineKeyboardButton(tempUser.UserName!)
+            {
+                CallbackData = $"profile {tempUser.Id}"
+            });
         }
         
         await bot.Client.SendTextMessageAsync(chatId, sb.ToString(),
-            replyMarkup: keyboard, cancellationToken: ct);
+            replyMarkup: GenerateKeyboard(pageIndex, buttons), cancellationToken: ct);
         await bot.Client.DeleteMessageAsync(chatId, callback.Message.MessageId, ct);
     }
 
-    private static InlineKeyboardMarkup GenerateKeyboard(int pageIndex)
+    private static InlineKeyboardMarkup GenerateKeyboard(int pageIndex, List<InlineKeyboardButton> buttons)
     {
         string prevIndex = pageIndex <= 1 ? "" : $" {pageIndex - 1}";
         string nextIndex = $" {pageIndex + 1}";
+        var firstRowButtons = buttons.Count >= 3 
+            ? buttons[..3] 
+            : buttons;
+        var secondRowButtons = buttons.Count >= 5 
+            ? buttons[3..5] 
+            : buttons.Count >= 3 
+                ? buttons[3..]
+                : [];
+        var thirdRowButtons = buttons.Count > 5
+            ? buttons[5..]
+            : [];
         return new InlineKeyboardMarkup(
         [
+            firstRowButtons,
+            secondRowButtons,
+            thirdRowButtons,
             [
-                new InlineKeyboardButton("Предыдущая страница")
+                new InlineKeyboardButton("<=")
                 {
                     CallbackData = $"subscriptions{prevIndex}"
                 },
-                new InlineKeyboardButton("Следующая страница")
+                new InlineKeyboardButton("=>")
                 {
                     CallbackData = $"subscriptions{nextIndex}"
                 }

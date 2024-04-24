@@ -29,13 +29,11 @@ public class MySubscriptionsCommand(
         NoSubscriptions
     }
 
-    private static readonly IReplyMarkup Keyboard = new InlineKeyboardMarkup(
+    private static readonly List<InlineKeyboardButton> NavigationButtons =
     [
-        [
-            new InlineKeyboardButton("Предыдущая страница") { CallbackData = "subscriptions" },
-            new InlineKeyboardButton("Следующая страница") { CallbackData = "subscriptions 1" }
-        ]
-    ]);
+        new InlineKeyboardButton("<=") { CallbackData = "subscriptions" },
+        new InlineKeyboardButton("=>") { CallbackData = "subscriptions 1" }
+    ];
 
     public async Task ExecuteAsync(Update update, CancellationToken ct = default)
     {
@@ -53,6 +51,7 @@ public class MySubscriptionsCommand(
         TgBotException.ThrowIf(subscriptions.IsNullOrEmpty(), ErrorMessages[(int)Errors.NoSubscriptions]);
 
         var sb = new StringBuilder();
+        var buttons = new List<InlineKeyboardButton>();
         for (int i = 0; i < subscriptions.Length; i++)
         {
             var tempUser = subscriptions[i].BirthdayMan!.User!;
@@ -62,9 +61,35 @@ public class MySubscriptionsCommand(
             sb.AppendLine($"{i + 1}) {tempUser.Name}" +
                           $" {tempUser.Name}{patronymic}: " +
                           $"{tempUser.BirthDate.ToShortDateString()}");
+            buttons.Add(new InlineKeyboardButton($"{tempUser.UserName}")
+            {
+                CallbackData = $"profile {tempUser.Id}"
+            });
         }
 
-        await Client.SendTextMessageAsync(chatId, sb.ToString(), 
-            replyMarkup: Keyboard, cancellationToken: ct);
+        await Client.SendTextMessageAsync(chatId, sb.ToString(),
+            replyMarkup: GenerateKeyboard(buttons), cancellationToken: ct);
+    }
+    
+    private static InlineKeyboardMarkup GenerateKeyboard(List<InlineKeyboardButton> buttons)
+    {
+        var firstRowButtons = buttons.Count >= 3 
+            ? buttons[..3] 
+            : buttons;
+        var secondRowButtons = buttons.Count >= 5 
+            ? buttons[3..5] 
+            : buttons.Count >= 3 
+                ? buttons[3..]
+                : [];
+        var thirdRowButtons = buttons.Count > 5
+            ? buttons[5..]
+            : [];
+        return new InlineKeyboardMarkup(
+        [
+            firstRowButtons,
+            secondRowButtons,
+            thirdRowButtons,
+            NavigationButtons
+        ]);
     }
 }

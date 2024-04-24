@@ -44,7 +44,7 @@ public class SubscriptionsService(AppDbContext context) : ISubscriptionsService
             .Include(s => s.BirthdayMan)
             .ThenInclude(p => p!.User)
             .Where(s => s.SubscriberId == subscriberId)
-            .Skip(10 * pageIndex)
-            .Take(10)
+            .Skip(8 * pageIndex)
+            .Take(8)
             .ToArrayAsync(ct);
 }

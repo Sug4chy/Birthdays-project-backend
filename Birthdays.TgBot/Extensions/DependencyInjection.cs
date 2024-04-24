@@ -9,6 +9,7 @@ public static class DependencyInjection
         => services.AddScoped<IBotCommand, MenuCommand>()
             .AddScoped<IBotCommand, MenuSubCommand>()
             .AddScoped<IBotCommand, MySubscriptionsCommand>()
+            .AddScoped<IBotCommand, MyProfileCommand>()
             .AddScoped<IBotCommand, StartCommand>();
 
     public static IServiceCollection AddCallbackHandlers(this IServiceCollection services)
