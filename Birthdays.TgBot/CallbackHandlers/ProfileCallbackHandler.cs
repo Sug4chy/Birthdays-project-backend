@@ -7,36 +7,37 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Birthdays.TgBot.Commands;
+namespace Birthdays.TgBot.CallbackHandlers;
 
-public class MyProfileCommand(
+public class ProfileCallbackHandler(
     Bot.Bot bot,
     IUserService userService,
     IWishListService wishListService
-) : IBotCommand
+) : ICallbackHandler
 {
     private static readonly string[] ErrorMessages =
     [
-        "Я вас не узнаю, поэтому и не могу сказать, подписаны ли вы хоть на кого-то. Извините"
+        "Извините, что-то пошло не так. Не могу найти пользователя с нулевым кодом...",
+        "Извините, что-то пошло не так. Не могу найти пользователя с таким кодом..."
     ];
 
     private enum Errors
     {
+        NoProfileId,
         NoSuchUser
     }
 
-    public string Name => "Мой профиль";
-    public ITelegramBotClient Client { get; } = bot.Client;
+    private ITelegramBotClient Client { get; } = bot.Client;
 
-    public async Task ExecuteAsync(Update update, CancellationToken ct = default)
+    public string Name => "profile";
+
+    public async Task HandleCallbackAsync(CallbackQuery? callback, CancellationToken ct = default)
     {
-        if (update.Message is null)
-        {
-            return;
-        }
+        long chatId = callback!.Message!.Chat.Id;
+        string[] callbackParts = callback.Data?.Split(' ') ?? [];
+        TgBotException.ThrowIf(callbackParts.Length <= 1, ErrorMessages[(int)Errors.NoProfileId]);
 
-        long chatId = update.Message.Chat.Id;
-        var user = await userService.GetUserWithProfileByTelegramChatIdAsync(chatId, ct);
+        var user = await userService.GetUserByIdAsync(callbackParts[1], ct);
         TgBotException.ThrowIf(user is null, ErrorMessages[(int)Errors.NoSuchUser]);
 
         var wishLists = await wishListService.GetWishListsByProfileIdAsync(user!.ProfileId, ct);
@@ -46,7 +47,7 @@ public class MyProfileCommand(
             : "";
         var sb = new StringBuilder();
         sb.AppendLine($"""
-                       Пожалуйста, вот ваш профиль:
+                       Вот, профиль пользователя {user.UserName}:
 
                        Login: {user.UserName}
                         
@@ -76,19 +77,12 @@ public class MyProfileCommand(
                 string wishDescription = wish.Description is not null
                     ? $"\n   {wish.Description}"
                     : "";
-                if (wish.GiftRef is not null)
-                {
-                    sb.AppendLine($" - <a href=\"{wish.GiftRef}\">{wish.Name}</a>{wishDescription}");
-                }
-                else
-                {
-                    sb.AppendLine($" - {wish.Name}{wishDescription}");
-                }
+                sb.AppendLine($" - [{wish.Name}]({wish.GiftRef}){wishDescription}");
             }
 
             sb.AppendLine();
         }
-        
+
         await Client.SendTextMessageAsync(chatId, sb.ToString(),
             parseMode: ParseMode.Html,
             cancellationToken: ct

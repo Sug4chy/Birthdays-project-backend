@@ -13,5 +13,6 @@ public static class DependencyInjection
             .AddScoped<IBotCommand, StartCommand>();
 
     public static IServiceCollection AddCallbackHandlers(this IServiceCollection services)
-        => services.AddScoped<ICallbackHandler, SubscriptionsPaginationCallbackHandler>();
+        => services.AddScoped<ICallbackHandler, SubscriptionsPaginationCallbackHandler>()
+            .AddScoped<ICallbackHandler, ProfileCallbackHandler>();
 }

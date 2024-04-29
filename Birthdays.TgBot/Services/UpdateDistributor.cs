@@ -33,9 +33,21 @@ public class UpdateDistributor(
     private async Task SafeExecuteCommandAsync(Update update, CancellationToken ct = default)
     {
         var message = update.Message;
-        var commands = serviceProvider.GetServices<IBotCommand>();
-        foreach (var command in commands
-                     .Where(command => message!.Text!.StartsWith(command.Name)))
+        var commands = serviceProvider.GetServices<IBotCommand>()
+            .Where(command => message!.Text!.StartsWith(command.Name))
+            .ToList();
+        if (commands.Count == 0)
+        {
+            await bot.Client.SendStickerAsync(update.Message!.Chat.Id,
+                InputFile.FromFileId("CAACAgIAAxkBAAIBj2YvIj4jauUww79ZFV6vhrtdo4NMAALLFAACj5zIS1hqHGYd64iyNAQ"),
+                cancellationToken: ct
+            );
+            await bot.Client.SendTextMessageAsync(update.Message.Chat.Id, "Извините, я не знаю такой команды...", 
+                cancellationToken: ct);
+            return;
+        }
+
+        foreach (var command in commands)
         {
             try
             {
