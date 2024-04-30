@@ -11,6 +11,9 @@ public class MigrationAsyncInitializer(AppDbContext context) : IAsyncInitializer
         if ((await context.Database.GetPendingMigrationsAsync(cancellationToken)).Any())
         {
             await context.Database.MigrateAsync(cancellationToken);
+            await context.Database.ExecuteSqlAsync(
+                $"", 
+                cancellationToken);
         }
     }
 }
