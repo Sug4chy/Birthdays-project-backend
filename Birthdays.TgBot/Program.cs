@@ -1,4 +1,5 @@
 using Birthdays.TgBot.Bot;
+using Birthdays.TgBot.Configs;
 using Birthdays.TgBot.Extensions;
 using Birthdays.TgBot.Services;
 using Birthdays.TgBot.Workers;
@@ -11,6 +12,8 @@ using Domain.Services.WishLists;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<BotConfigOptions>(builder.Configuration.GetSection("Bot"));
+builder.Services.Configure<NotificationConfigOptions>(
+    builder.Configuration.GetSection(NotificationConfigOptions.Position));
 builder.Services.AddSingleton<Bot>();
 
 builder.Services.AddDataLayerServices(builder.Configuration);
