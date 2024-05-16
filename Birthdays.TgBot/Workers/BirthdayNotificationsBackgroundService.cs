@@ -1,12 +1,10 @@
 ﻿using Birthdays.TgBot.Configs;
 using Birthdays.TgBot.Services;
-using Data.Context;
 using Microsoft.Extensions.Options;
 
 namespace Birthdays.TgBot.Workers;
 
 public class BirthdayNotificationsBackgroundService(
-    Bot.Bot bot,
     IServiceScopeFactory serviceScopeFactory,
     ILogger<BirthdayNotificationsBackgroundService> logger,
     IOptions<NotificationConfigOptions> options
@@ -18,10 +16,7 @@ public class BirthdayNotificationsBackgroundService(
     {
         try
         {
-            using var scope = serviceScopeFactory.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            await new NotificationCheckerAndSender(bot, context, logger).CheckAndSendNotificationsAsync(
-                stoppingToken);
+            await CheckAndSendAsync(stoppingToken);
         }
         catch (Exception e)
         {
@@ -35,10 +30,7 @@ public class BirthdayNotificationsBackgroundService(
             {
                 try
                 {
-                    using var scope = serviceScopeFactory.CreateScope();
-                    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    await new NotificationCheckerAndSender(bot, context, logger).CheckAndSendNotificationsAsync(
-                        stoppingToken);
+                    await CheckAndSendAsync(stoppingToken);
                 }
                 catch (Exception e)
                 {
@@ -51,5 +43,12 @@ public class BirthdayNotificationsBackgroundService(
             logger.LogInformation("Execution of {BackgroundService} background service was canceled",
                 GetType().Name);
         }
+    }
+
+    private async Task CheckAndSendAsync(CancellationToken ct = default)
+    {
+        using var scope = serviceScopeFactory.CreateScope();
+        var sender = scope.ServiceProvider.GetRequiredService<NotificationCheckerAndSender>();
+        await sender.CheckAndSendNotificationsAsync(ct);
     }
 }

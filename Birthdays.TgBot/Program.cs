@@ -22,6 +22,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITelegramService, TelegramService>();
 builder.Services.AddScoped<IWishListService, WishListService>();
 
+builder.Services.AddScoped<NotificationCheckerAndSender>();
 builder.Services.AddHostedService<BirthdayNotificationsBackgroundService>();
 
 builder.Services.AddBotCommands();

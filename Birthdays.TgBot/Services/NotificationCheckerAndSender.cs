@@ -8,7 +8,7 @@ namespace Birthdays.TgBot.Services;
 public class NotificationCheckerAndSender(
     Bot.Bot bot,
     AppDbContext dbContext,
-    ILogger logger
+    ILogger<NotificationCheckerAndSender> logger
 )
 {
     private static readonly int[] DaysCounts = [0, 1, 7];
@@ -66,10 +66,17 @@ public class NotificationCheckerAndSender(
         int daysCount, CancellationToken ct = default)
         => dbContext.Users
             .Include(u => u.Profile)
-            .ThenInclude(p => p!.SubscriptionsAsBirthdayMan)!
+            .ThenInclude(p => p!.SubscriptionsAsBirthdayMan!
+                .Where(s => s.Subscriber!
+                    .User!.TelegramChatId.HasValue
+                )
+            )
             .ThenInclude(s => s.Subscriber)
-            .ThenInclude(p => p!.User!.TelegramChatId == null ? p.User : null)
-            .Where(u => u.BirthDate.Month == DateTime.Today.Month
-                        && u.BirthDate.Day == DateTime.Today.Day + daysCount)
+            .ThenInclude(p => p!.User)
+            .Where(
+                u =>
+                    u.BirthDate.Month == DateTime.Today.Month
+                    && u.BirthDate.Day == DateTime.Today.Day + daysCount
+            )
             .ToListAsync(ct);
 }
