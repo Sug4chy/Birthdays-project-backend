@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240325053635_AddedChatIdField")]
+    partial class AddedChatIdField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,39 @@ namespace Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Data.Entities.Chat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BirthdayManId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ChatType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChatUrl")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatingTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EditingTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("ChatUrl");
+
+                    b.HasIndex("BirthdayManId");
+
+                    b.ToTable("Chats", (string)null);
+                });
 
             modelBuilder.Entity("Data.Entities.DatabaseFile", b =>
                 {
@@ -185,7 +221,7 @@ namespace Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<long?>("TelegramChatId")
+                    b.Property<long>("TelegramChatId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -419,6 +455,17 @@ namespace Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Entities.Chat", b =>
+                {
+                    b.HasOne("Data.Entities.Profile", "BirthdayMan")
+                        .WithMany("Chats")
+                        .HasForeignKey("BirthdayManId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BirthdayMan");
+                });
+
             modelBuilder.Entity("Data.Entities.Subscription", b =>
                 {
                     b.HasOne("Data.Entities.Profile", "BirthdayMan")
@@ -535,6 +582,8 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.Profile", b =>
                 {
+                    b.Navigation("Chats");
+
                     b.Navigation("SubscriptionsAsBirthdayMan");
 
                     b.Navigation("SubscriptionsAsSubscriber");

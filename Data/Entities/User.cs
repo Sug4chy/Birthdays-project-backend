@@ -22,6 +22,8 @@ public class User : IdentityUser, IAuditableEntity
     [MaxLength(50)]
     public string? CurrentRefreshToken { get; set; }
     public DateTime? RefreshTokenExpiryTime { get; set; }
+    public long? TelegramChatId { get; set; }
+    
     public DateTime CreatingTime { get; set; }
     public DateTime EditingTime { get; set; }
 }

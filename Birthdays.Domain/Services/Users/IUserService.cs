@@ -15,4 +15,7 @@ public interface IUserService
 
     Task<List<User>> GetAllUsersWithPaginationIndexAsync(string currentUserId, int offset, int limit,
         CancellationToken ct = default);
+
+    Task<User?> GetUserByTelegramChatIdAsync(long chatId, CancellationToken ct = default);
+    Task<User?> GetUserWithProfileByTelegramChatIdAsync(long chatId, CancellationToken ct = default);
 }

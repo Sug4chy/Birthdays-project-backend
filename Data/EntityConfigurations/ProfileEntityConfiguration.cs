@@ -16,10 +16,6 @@ public class ProfileEntityConfiguration : IEntityTypeConfiguration<Profile>
             .WithOne(u => u.Profile)
             .HasForeignKey<User>(u => u.ProfileId);
 
-        builder.HasMany(p => p.Chats)
-            .WithOne(c => c.BirthdayMan)
-            .HasForeignKey(c => c.BirthdayManId);
-
         builder.HasMany(p => p.SubscriptionsAsBirthdayMan)
             .WithOne(s => s.BirthdayMan)
             .HasForeignKey(s => s.BirthdayManId);

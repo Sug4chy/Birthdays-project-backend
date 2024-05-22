@@ -5,6 +5,7 @@ using Domain.Handlers.WishLists;
 using Domain.Services.Auth;
 using Domain.Services.Profiles;
 using Domain.Services.Subscriptions;
+using Domain.Services.Telegram;
 using Domain.Services.Tokens;
 using Domain.Services.Users;
 using Domain.Services.WishLists;
@@ -31,6 +32,7 @@ public static class DependencyInjection
         services.AddScoped<GetProfileByIdHandler>();
         services.AddScoped<GetCurrentProfileHandler>();
         services.AddScoped<SubscribeToHandler>();
+        services.AddScoped<SubscribeAllHandler>();
         services.AddScoped<UnsubscribeFromHandler>();
         services.AddScoped<GetProfilesByPageIndexHandler>();
 
@@ -55,6 +57,7 @@ public static class DependencyInjection
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ISubscriptionsService, SubscriptionsService>();
         services.AddScoped<IWishListService, WishListService>();
+        services.AddScoped<ITelegramService, TelegramService>();
         return services;
     }
 

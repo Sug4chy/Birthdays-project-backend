@@ -37,4 +37,14 @@ public class SubscriptionsService(AppDbContext context) : ISubscriptionsService
         await context.SaveChangesAsync(ct);
         return Result.Success();
     }
+
+    public Task<Subscription[]> GetSubscriptionsByProfileIdWithPaginationAsync(Guid subscriberId, int pageIndex,
+        CancellationToken ct = default)
+        => context.Subscriptions
+            .Include(s => s.BirthdayMan)
+            .ThenInclude(p => p!.User)
+            .Where(s => s.SubscriberId == subscriberId)
+            .Skip(8 * pageIndex)
+            .Take(8)
+            .ToArrayAsync(ct);
 }

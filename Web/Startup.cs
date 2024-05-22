@@ -15,6 +15,8 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment environme
     {
         services.Configure<JwtConfigurationOptions>(
             configuration.GetSection(JwtConfigurationOptions.Position));
+        services.Configure<TgBotConfigurationOptions>(
+            configuration.GetSection(TgBotConfigurationOptions.Position));
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerWithJwtAuthentication();

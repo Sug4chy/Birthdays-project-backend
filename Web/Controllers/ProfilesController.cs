@@ -4,6 +4,7 @@ using Domain.Handlers.Profiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.Models;
 
 namespace Web.Controllers;
 
@@ -47,6 +48,14 @@ public class ProfilesController : ControllerBase
             {
                 BirthdayManId = profileId
             }, ct);
+
+    [HttpPost("subscribe")]
+    [ProducesResponseType(statusCode: 200)]
+    [ProducesResponseType(typeof(ServerErrorModel), statusCode: 401)]
+    public Task SubscribeAll(
+        [FromServices] SubscribeAllHandler handler,
+        CancellationToken ct = default)
+        => handler.Handle(ct);
 
     [Authorize(Policy = "ShouldIncludeGuidInJwt", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
