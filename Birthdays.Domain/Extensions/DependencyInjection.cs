@@ -32,6 +32,7 @@ public static class DependencyInjection
         services.AddScoped<GetProfileByIdHandler>();
         services.AddScoped<GetCurrentProfileHandler>();
         services.AddScoped<SubscribeToHandler>();
+        services.AddScoped<SubscribeAllHandler>();
         services.AddScoped<UnsubscribeFromHandler>();
         services.AddScoped<GetProfilesByPageIndexHandler>();
 
