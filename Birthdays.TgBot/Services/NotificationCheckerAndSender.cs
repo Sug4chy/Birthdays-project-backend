@@ -35,7 +35,7 @@ public class NotificationCheckerAndSender(
         foreach (var birthdayMan in users)
         {
             var subscriptions = birthdayMan.Profile!.SubscriptionsAsBirthdayMan;
-            if (subscriptions is null)
+            if (subscriptions.Count == 0)
             {
                 continue;
             }
@@ -66,7 +66,7 @@ public class NotificationCheckerAndSender(
         int daysCount, CancellationToken ct = default)
         => dbContext.Users
             .Include(u => u.Profile)
-            .ThenInclude(p => p!.SubscriptionsAsBirthdayMan!
+            .ThenInclude(p => p!.SubscriptionsAsBirthdayMan
                 .Where(s => s.Subscriber!
                     .User!.TelegramChatId.HasValue
                 )
