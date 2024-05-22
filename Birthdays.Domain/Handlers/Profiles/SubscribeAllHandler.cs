@@ -13,14 +13,10 @@ public class SubscribeAllHandler(
     public async Task Handle(CancellationToken ct = default)
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
-        
+
         var profiles = await GetAllProfilesExceptAsync(currentUser.ProfileId, ct);
         foreach (var profile in profiles)
         {
-            profile.SubscriptionsAsBirthdayMan ??= new List<Subscription>();
-            if (profile.SubscriptionsAsBirthdayMan.Any(s => s.SubscriberId == currentUser.ProfileId))
-                continue;
-
             await CreateSubscriptionAsync(currentUser.ProfileId, profile.Id, ct);
         }
 
@@ -30,9 +26,10 @@ public class SubscribeAllHandler(
     private Task<List<Profile>> GetAllProfilesExceptAsync(Guid profileId, CancellationToken ct = default)
         => dbContext.Profiles
             .Include(p => p.SubscriptionsAsBirthdayMan)
-            .Where(p => p.Id != profileId)
+            .Where(p => p.Id != profileId && p.SubscriptionsAsBirthdayMan
+                .All(s => s.SubscriberId != profileId))
             .ToListAsync(ct);
-    
+
     private async Task CreateSubscriptionAsync(Guid subscriberId, Guid birthdayManId,
         CancellationToken ct = default)
     {
