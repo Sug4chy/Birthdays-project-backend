@@ -61,7 +61,7 @@ public class ProfileCallbackHandler(
             return;
         }
 
-        sb.AppendLine("Списки пожеланий:");
+        sb.AppendLine("\nСписки пожеланий:");
         for (int i = 0; i < wishLists.Count; i++)
         {
             wishLists[i].Wishes ??= new List<Wish>();
@@ -77,7 +77,7 @@ public class ProfileCallbackHandler(
                 string wishDescription = wish.Description is not null
                     ? $"\n   {wish.Description}"
                     : "";
-                sb.AppendLine($" - [{wish.Name}]({wish.GiftRef}){wishDescription}");
+                sb.AppendLine($" - <a href=\"{wish.GiftRef}\">{wish.Name}</a>{wishDescription}");
             }
 
             sb.AppendLine();

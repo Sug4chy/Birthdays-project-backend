@@ -14,7 +14,7 @@ public class SubscribeAllHandler(
     {
         var currentUser = await userAccessor.GetCurrentUserAsync(ct);
 
-        var profiles = await GetAllProfilesExceptAsync(currentUser.ProfileId, ct);
+        var profiles = await GetAllUnsubscribedProfilesExceptAsync(currentUser.ProfileId, ct);
         foreach (var profile in profiles)
         {
             await CreateSubscriptionAsync(currentUser.ProfileId, profile.Id, ct);
@@ -23,11 +23,14 @@ public class SubscribeAllHandler(
         await dbContext.SaveChangesAsync(ct);
     }
 
-    private Task<List<Profile>> GetAllProfilesExceptAsync(Guid profileId, CancellationToken ct = default)
+    private Task<List<Profile>> GetAllUnsubscribedProfilesExceptAsync(Guid profileId, CancellationToken ct = default)
         => dbContext.Profiles
             .Include(p => p.SubscriptionsAsBirthdayMan)
-            .Where(p => p.Id != profileId && p.SubscriptionsAsBirthdayMan
-                .All(s => s.SubscriberId != profileId))
+            .Where(
+                p => p.Id != profileId
+                     && p.SubscriptionsAsBirthdayMan
+                         .All(s => s.SubscriberId != profileId)
+            )
             .ToListAsync(ct);
 
     private async Task CreateSubscriptionAsync(Guid subscriberId, Guid birthdayManId,
